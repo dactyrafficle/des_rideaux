@@ -29,7 +29,7 @@
 
 <div class='section border margin padding'>
 
-<p><span class='math'> RSS^{OLS} = \sum \hat{e}^2 = \sum (y - x \hat{\beta}) </span></p>
+<p><span class='math'> RSS^{OLS} = \sum \hat{e}^2 = \sum (y - x \hat{\beta}^{OLS}) </span></p>
 <p> under ols, <span class='math'>var(y) = var(\hat{y} + \hat{e}) = var(\hat{y}) + var(\hat{e})</span>, since <span class='math'>cov(\hat{y},\hat{e}) = 0</span></p>
 <p> so <span class='math'>RSS^{OLS} \lt TSS </span></p> 
 
@@ -39,15 +39,19 @@
 
 <p><span class='math'> \tilde{\beta} </span> did not come from using x, but rather from <span class='math'> \hat{x} </span>, so it is possible the <span class='math'> RSS^{IV} \gt TSS </span></p>
 
-<p> so it is possible that <span class='math'>RSS^{IV} \gt RSS^{OLS}</span> </p>
-<p> so in that sense, IV will not necessarily fit better than OLS </p>
-<p> but obviously, that's not the point. IV is for estimating the parameters of the structural equation, so why would the R2 matter </p>
+<p> which means that <span class='math'>RSS^{IV} \gt RSS^{OLS}</span> is possible </p>
+<p> so, IV will not necessarily fit better than OLS </p>
+<p> but obviously, that's not the point of IV. IV is for estimating the parameters of the structural equation, so why would the R2 matter ? </p>
 
 <h4> an exaggerated case </h4>
-<p> x and u are negatively correlated. and when x goes up, y tends to go down. but the structural effect of x on y is positive. the total sum of squares looks at y compared to its mean, <span class='math'>\bar{y}</span>. but the RSS uses <span class='math'> \hat{e}^{iv} = y - x \hat{\beta}^{iv} </span></p>
+<p> say x and u are negatively correlated. and when x goes up, y tends to go down. but the structural effect of x on y is positive. the total sum of squares looks at y compared to its mean, <span class='math'>\bar{y}</span>. but the <span class='math'>RSS^{IV}</span> uses <span class='math'> \hat{e}^{IV} = y - x \hat{\beta}^{IV} </span></p>
+
+<p> so that makes <span class='math'>RSS^{IV}</span> the sum of the squared distances between the dots and the blue line </p>
+<p> <span class='math'>RSS^{OLS}</span> is the sum of the squared distances between the dots and the orange line. if we estimate OLS with an intercept, that sum is always going to be less than <span class='math'>TSS</span>, which is the sum of the squared distances between the points and the green line </p>
 
 
-<div class='box'>
+
+<div class='box border padding'>
 <pre>
 
 library('AER')

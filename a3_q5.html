@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./includes/a.css">
+  <link rel="icon" href="./includes/a.png"> 
+  
+  <script src='./includes/r_box.js'></script>
+  <script src='./includes/r_matrix.js'></script>
+  
+  <!-- the wonderful katex ! -->
+  <link rel="stylesheet" href="./includes/katex/katex.min.css">
+  <script src="./includes/katex/katex.min.js"></script>
+  <script src="./includes/a.js"></script>
+
+  <title> a3 q5 &middot; </title>
+
+</head>
+
+
+<div class='section border margin padding'>
+  <h4> a3 q5 </h4>
+  <img src='./a3_desc/a3_q5.png' />
+</div>
+
+<div class='section border margin padding'>
+
+<pre>
+
+https://www.statalist.org/forums/forum/general-stata-discussion/general/1571907-instrumental-variable-and-quadratic-term
+
+https://www.statalist.org/forums/forum/general-stata-discussion/general/1597966-forbidden-regression-quadratic-regression
+
+forbidden regression
+
+angrist and pischke 2008, page 144
+
+
+If you have x and xsquared as regressors in your equation and if x is endogenous, so is x squared. This means that you need (at least) two instruments. This you are aware of.
+Let IV1 be an instrument for x. Then you can use IV1squared as and additional instrument.
+If you have two instruments for x, say z1 and z2, then you should use z1squared, z2squared and z1 multiplied by z2 as additional instruments.
+</pre>
+
+<p><span class='math'> X \in R </span> means that <span class='math'>X</span> is just a scalar random variable </p>
+
+<pre>
+
+E[xe] really only makes sense if x and e are just scalar random variables
+beta_1 X wouldnt really make sense, since they would both be vectors
+so by writing beta_1 X, we're really forcing the issue, they are scalar random variables
+
+E[xe] = cov(x,e) + E[x]E[e]
+
+E[ze]=0
+</pre></div>
+
+
+<div class='section border margin padding'>
+<pre>
+
+part a 
+
+x^2 is endogenous, and we need an instrument for it
+
+
+The answer to your question is nicely discussed in Wooldridge (2000), Econometric Analysis of Cross Section and Panel Data, section 9.5, page. 236-237.
+There are two approaches you can adopt. The first is to use the squares of the other exogenous variables as additional instruments. The second approach requires the use of (xhat)2 as instrument in the second-stage regression. Therefore, after obtaining (xhat) from first-stage regression and squaring this value, you must estimate:
+ivreg2 y (x x2 = z (xhat)2 ) c
+
+
+look at question 12.7
+if E[e|x]=0
+show that E[xe]=0 and E[x^2e]=0
+
+E[xe] = E[ E[xe|x] ] = E[ x * E[e|x] ]
+
+
+x is endogenous, meaning E[xe] \ne 0
+is x^2 endogenous?
+E[x^2e] = E[ E[x^2e|x] ] = E[ x^2 E[e|x] ]
+
+
+
+for z to be an instrument for x we need
+corr(z, x) \ne 0
+corr(z, e) = 0
+
+for z^2 to be an instrument for x^2 we need
+corr(z^2, x^2) \ne 0
+corr(z^2, e) = 0
+
+if x is endogenous, the x^2 is endogenous
+
+
+
+12.6 in hansen p336. david card (1995)
+  
+Card (1995) also points out that if education is endogenous then so is our measure of experience since it is calculated by subtracting education from age.
+
+He suggests that we can use the variables age and age^2 as instruments for experience and experience^2.
+
+** so if experience is endogenous, then so is experience^2
+
+The age variables are exogenous (not choice variables) yet highly correlated with experience and experience^2.
+
+Notice that this approach treats experience^2 as a variable separate from experience. Indeed, this is the correct approach.
+
+p342
+  
+
+** equation 12.22 is not violated.
+
+</pre></div>
+
+<div class='section border margin padding'>
+<pre>
+ cov(x,y) = E[xy] - E[x]E[y]
+ cov(x,x^2) = E[x \cdot x^2] - E[x] E[x^2]
+ cov(x,x^2) = E[x^3] - E[x] E[x^2]
+ 
+ cov(x^2,e) = ? 
+</pre>
+
+</div>

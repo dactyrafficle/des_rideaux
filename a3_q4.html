@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./includes/a.css">
+  <link rel="icon" href="./includes/a.png"> 
+  
+  <script src='./includes/r_box.js'></script>
+  <script src='./includes/r_matrix.js'></script>
+  
+  <!-- the wonderful katex ! -->
+  <link rel="stylesheet" href="./includes/katex/katex.min.css">
+  <script src="./includes/katex/katex.min.js"></script>
+  <script src="./includes/a.js"></script>
+
+  <title> a3 q4 &middot; </title>
+
+</head>
+
+
+<div class='section border margin padding'>
+
+  <h4> a3 q4 </h4>
+
+  <p> take the linear instrumental variables equation <span class='math'>y_i = \beta_0 + \beta_1 x_i + \beta_2 w_i + e_i</span> , where <span class='math'>z_i</span> is an instrument </p>
+
+<pre>
+
+You are then told that Wi is unavailable. Consider the 2SLS estimator of β1 obtained from the misspecified IV regression, by regressing yi on xi only, using zi as an instrument for xi.
+
+a) Derive the conditions under which your IV estimate of β1 from the misspecified model is
+consistent.
+
+b) Find the asymptotic distribution of this IV estimate in part a) as <span class='math'>n \rightarrow \infin</span>.
+
+</pre>
+
+</div>
+
+
+<div class='section border margin padding'>
+
+<div class='box'>
+<p> if we assume that <p>
+<ul>
+ <li><p> z is relevant : <span class='math'> \text{corr}(z,x) \ne 0 </span></p>
+ <li><p> z is exogenous : <span class='math'> \text{corr}(z,e) = 0 </span></p>
+ <li><p> w is exogenous : <span class='math'> \text{corr}(w,e) = 0 </span></p>
+ <li><p> x really is endogenous : <span class='math'> \text{corr}(x,e) \ne 0 </span></p>
+</ul>
+</div>
+
+<table class='box margin padding mytables'>
+
+ <tr>
+  <td>&middot;</td>
+  <td><span class='math'>x</span></td>
+  <td><span class='math'>z</span></td>
+  <td><span class='math'>w</span></td>
+  <td><span class='math'>u</span></td>
+ </tr>
+
+ <tr>
+  <td>x</td>
+  <td style='background-color:#ddd;'></td>
+  <td style='background-color:#47c7;'><span class='math'>\rho_{xz} \ne 0 </span></td>
+  <td style='background-color:#f005;'><span class='math'>\rho_{xw} </span></td>
+  <td style='background-color:#47c7;'><span class='math'>\rho_{xu} \ne 0 </span></td>
+ </tr>
+ 
+ <tr>
+  <td>z</td>
+  <td></td>
+  <td style='background-color:#ddd;'></td>
+  <td style='background-color:#f009;'><span class='math'>\rho_{zw} = 0 </span></td>
+  <td style='background-color:#47c7;'><span class='math'>\rho_{zu} = 0 </span></td>
+ </tr>
+
+ <tr>
+  <td>w</td>
+  <td></td>
+  <td></td>
+  <td style='background-color:#ddd;'></td>
+  <td style='background-color:#47ca;'><span class='math'>\rho_{wu} = 0 </span></td>
+ </tr>
+
+ <tr>
+  <td>u</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style='background-color:#ddd;'></td>
+ </tr>
+
+</table>
+
+</div>
+
+<div class='section border margin padding'>
+
+  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,y)}{cov(z,x)} = \dfrac{cov(z,\beta_0 + \beta_1 x + \beta_2 w + u)}{cov(z,x)} = \dfrac{cov(z,\beta_1 x)}{cov(z,x)} + \dfrac{cov(z,\beta_2 w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} = \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} </span></p>
+
+  <p> plim  cov(z,u) = 0 </p>
+  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \plim_{n \rightarrow \infin} \bigg ( \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} \bigg ) </span></p>
+  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \beta_1 + \plim_{n \rightarrow \infin} \bigg (  \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} \bigg ) + 0 </span></p>
+  
+  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + 0 </span></p>
+
+  <h4> result </h4>
+  <p> if <span class='math'> \text{corr}(z,w) \ne 0 </span> and <span class='math'>\beta_2 \ne 0 </span>, the estimte is biased, and inconsistent </p>
+  
+</div>
+
+<div class='section border margin padding'>
+
+  <h4> the asymptotic distribution </h4>
+  
+  <p> the term beta_2 \cdot etc etc. the plim of that is constant, since cov(z,w) and cov(z,x) are consistent, and z, w, are iid, with variance, so that term is normally distributed </p>
+  
+
+  <p> start with the demeaned <span class='math'> y-\bar{y} = \beta_1 (x-\bar{x}) - (u-\bar{u})</span></p>
+  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,y)}{cov(z,x)} = \dfrac{cov(z,\beta_0 + \beta_1 x + u)}{cov(z,x)} = \dfrac{cov(z,\beta_1 x)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} = \beta_1 + \dfrac{cov(z,u)}{cov(z,x)} </span></p>
+  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,u)}{cov(z,x)} </span></p>
+  <p> this is normally distributed </p>
+  <p> first, we showed that plim btsls = \beta_1 </p>
+  
+  <p> when n is large, the numerator is approx q = (Z-mu_z)u </p>
+  <p> q is iid </p>
+  <p> q has variance var[(Z-mu_z)u] </p>
+  <p> therefore, var(q_bar) = var(q)/n </p>
+  <p> and by CLT, q_bar/sd(q_bar) approx N(0,1) </p>
+  
+  <p> the sample covariance is also consistent, s_zx plim cov(z,x) </p>
+  <p> \beta^{TSLS} \approx \beta_1 + \bar{q} / cov(z,x) is therefore approx normally distributed N(\beta_1, var()) where <span class='math'> var() = \dfrac{1}{n} \cdot \dfrac{ var[(Z-\mu_z)u] }{ (cov(z,x))^2} </span></p>
+  
+  <p> so even if it was inconsistent, it would still be normally distributed </p>
+
+</div>

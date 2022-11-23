@@ -43,4 +43,61 @@
 <p> so in that sense, IV will not necessarily fit better than OLS </p>
 <p> but obviously, that's not the point. IV is for estimating the parameters of the structural equation, so why would the R2 matter </p>
 
+<h4> an exaggerated case </h4>
+<p> x and u are negatively correlated. and when x goes up, y tends to go down. but the structural effect of x on y is positive. the total sum of squares looks at y compared to its mean, <span class='math'>\bar{y}</span>. but the RSS uses <span class='math'> \hat{e}^{iv} = y - x \hat{\beta}^{iv} </span></p>
+
+
+<div class='box'>
+<pre>
+
+library('AER')
+library('MASS')
+
+set.seed(1902)
+
+r_xz = 0.43
+r_xu = -0.85
+r_zu = 0.00
+data = mvrnorm(n=300,
+               mu=c(0, 0, 0),
+               Sigma=matrix(c(1.00, r_xz, r_xu,
+                              r_xz, 1.00, r_zu,
+                              r_xu, r_zu, 1.00), nrow=3),
+               empirical=FALSE)
+
+x = data[, 1]
+z = data[, 2]
+u = data[, 3]
+y = x + 2 * u
+
+plot(x,y)
+abline(h = mean(y), col="green")
+
+model_ols = lm(y ~ x)
+b_ols = summary(model_ols)$coefficients
+b_ols
+abline(b_ols[1], b_ols[2], col="orange")
+
+
+TSS = sum((y-mean(y))^2)
+TSS
+RSS_ols = sum(residuals(model_ols)^2)
+RSS_ols
+
+
+model_iv = ivreg(y ~ x | z)
+b_iv = coeftest(model_iv, vcov = vcovHC, type = "HC1")
+b_iv
+residuals_iv = residuals(model_iv)
+
+RSS_iv = sum(residuals_iv^2)
+RSS_iv
+abline(b_iv[1], b_iv[2], col="blue")
+  
+</pre></div>
+
+
+<div class='box'><img src='./a3_desc/a3_q2_plot.png' width=500 /></div>
+
+
 </div>

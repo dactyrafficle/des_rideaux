@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./includes/a.css">
+  <link rel="icon" href="./includes/a.png"> 
+  
+  <script src='./includes/r_box.js'></script>
+  <script src='./includes/r_matrix.js'></script>
+  
+  <!-- the wonderful katex ! -->
+  <link rel="stylesheet" href="./includes/katex/katex.min.css">
+  <script src="./includes/katex/katex.min.js"></script>
+  <script src="./includes/a.js"></script>
+
+  <title> a3 q1 &middot; </title>
+
+</head>
+
+
+
+<div class='section border margin padding'>
+<h4> a4 q1 part-a : 2sls vs iv reg </h4>
+<pre>
+<span class='comment'># a. 2sls vs ivreg </span>
+
+library(AER)
+
+y = df$log_gdp
+x = df$prot_score
+z = df$log_mort
+
+<span class='comment'># part a : using the instrument </span>
+
+model_s1 = lm(x ~ z)   # returns F-stat = 23.82 > 10 on q=1 restriction and 62 ((n=64) - (k=1) - 1) = 64 - 1 - 1 = 62
+summary(model_s1)
+
+x_hat = fitted(model_s1)
+
+<span class='comment'># returns a coefficient 0.90171(0.1256) t = 7.304 </span>
+model_s2 = lm(y ~ x_hat)
+summary(model_s2)
+
+<span class='comment'># ca vient d'une boite </span>
+<span class='comment'># returns a coefficient 0.91708 (0.16911) </span>
+y_iv = ivreg(y ~ x | z)
+coeftest(y_iv, vcov = vcovHC, type = "HC1")</pre>
+</div>
+
+
+<div class='section border margin padding'>
+<h4> a4 q1 part-b : compare to ols </h4>
+<pre>
+<span class='comment'># part b : ols </span>
+<span class='comment'># returns a coefficient of 0.52211(0.06119) t = 8.533 </span>
+model_ols = lm(y ~ x)
+summary(model_ols)
+</pre>
+</div>
+
+<div class='section border margin padding'>
+<h4> a4 q1 part-c : hausman test </h4>
+
+<pre>
+
+c. hausman test to compare 2sls vs ols
+
+
+the original Hausman test proposed a test for exogeneity based on a comparison of the OLS and
+2SLS estimators of \beta_1
+
+the general idea is very intuitive: if X is in fact exogenous, then OLS and 2SLS estimators should differ only because of sampling error - i.e. they should not give significantly different results
+
+hausman showed that, under the null hypothesis, the test statistic follows a chi-squared distribution
+
+ivreg y (x = z)
+predict ivresid,residuals
+est store ivreg
+reg y x
+hausman ivreg ., constant sigmamore df(1)
+hausman ivreg ., sigmamore df(1)
+hausman ivreg ., df(1)
+
+hausman ivreg .,constant         chi2(2) = 8.29, Prob>chi2 =      0.0158
+hausman ivreg .                  chi2(1) = 8.29, Prob>chi2 =      0.0040
+
+</pre>
+
+<table class='mytables'>
+<tr><td></td><td>ols</td><td>tsls</td></tr>
+<tr><td>coefficient </td><td> 0.522107</td><td>0.9170797</td><td>0.156003434 </td></tr>
+<tr><td>SE </td><td> 0.061185	</td><td> 0.1501859	 </td></tr>
+<tr><td>var </td><td> 0.003743604 </td><td> 0.022555805	</td><td> 0.0188122 </td></tr>
+
+<tr><td colspan=3> chi2 : </td><td colspan=1>8.292673423</td></tr>
+</table>
+
+<pre>
+the original hausman test was a test for exogeneity by comparing the ols and 2sls estimators of beta_1
+if x is in fact exogenous, then ols and 2sls estimators should differ only bc of sampling error
+they shouldnt be too different. how different ?
+hausman showed that under the null, the tstat H </pre>
+
+<span class='math'> H = \dfrac{ (\beta_1^{OLS}-\beta_1^{2SLS})^T (\beta_1^{OLS}-\beta_1^{2SLS})}{ ( \text{var}(\beta_1^{OLS}) - \text{var} (\beta_1^{2SLS}) )} </span>
+
+<pre>
+follows a chi-sq distribution where the number of degrees of freedom equals the number of explanatory variables in the model.
+but it relies on the assumption of homoskedasticity, since it needs the denominator of the test stat to be a PSD matrix 
+</pre>
+
+</div>
+
+<div class='section border margin padding'>
+<h4> a4 q1 part-d : </h4>
+
+<pre>
+
+d. log_gdp on log_mort, then prot_score on log_mort. explain how we get the iv estimate. wald estimate
+   this really does look like an application of FWL
+
+the wald estimator, 12.11 of hansen p343
+y on z returns : -.5697981
+x on z returns :  -.621318
+ 
+</pre>
+
+<span class='math'> \hat{\beta} = \dfrac{-0.5697981}{-0.621318} =  0.917079660 </span></p>
+
+<p> Hansen describes it as the change in Y due to Z over the change in X due to Z </p>
+
+</div>
+
+<div class='section border margin padding'>
+  
+  <h4> a4 q1 part-e : the math, and a comment on weak instruments </h4>
+
+
+
+<pre>
+e. a-d, do the math. write why weak instruments can be a problem.
+
+write up each of the regression equations and explain how the coefficients are related
+
+please provide an explanation of why weak instruments are problematic from these equations.
+
+</pre>
+
+if the instruments are weak, the normal distribution provides a poor approx to the sampling distribution of the tsls estimator, even in large samples
+
+so there is no theoretical justification for the usual methods of performing statistical inference, even in large samples
+95% confidence intervals constructed as the tsls estimator \pm 1.96 SE can contain the true value of the coefficient far less than 95% of the time
+
+if the instrument is weak, it can be badly biased towards the ols estimator
+
+if the instruments are weak, tsls is no longer reliable
+
+<p> in this case, we have one endogenous regressor, one instrument, and no exogenous regressors </p>
+<p><span class='math'> \hat{\beta_1}^{TSLS} = \dfrac{s_{zy}}{s_{zx}} \xrightarrow{p} \dfrac{cov(z,y)}{cov(z,x)} = \beta_1 </span></p>
+
+<p> as the instrument becomes less relevant, s_{zx} \xrightarrow{p} cov(z,x) = 0 </p>
+
+<h4> the denominator goes to 0 </h4>
+
+<p> clearly, the argument that b_tsls is consistent breaks down if z is not relevant </p>
+
+<p> when z is irrelevant, the large sample distribution of b_tsls is not normal, but rather a distribution of a ratio of 2 normal random variables </p>
+
+<p> the sample average is consistent, so <span class='math'> \bar{x} \xrightarrow{p} \mu_x </span>, and so on </p>
+<p><span class='math'> s_{zx} = \dfrac{1}{n} \cdot (z-\mu_z) (x-\mu_x) = \dfrac{1}{n} \cdot r = \bar{r} </span></p>
+
+<p><span class='math'> var{(\bar{r})} = \frac{var(r)}{n} </span></p>
+
+<p><span class='math'> \hat{\beta_1}^{TSLS} = \beta_1 + \cfrac{\frac{1}{n} \cdot (z-\mu_z)e }{ \frac{1}{n} \cdot (z-\mu_z)(x-\mu_x)} = \beta_1 + \cfrac{\frac{1}{n} \cdot q }{ \frac{1}{n} \cdot r} = \beta_1 + \cfrac{ \bar{q} }{ \bar{r} } </span></p>
+
+<p><span class='math'> var(\bar{r}) = var((z-\mu_z)(x-\mu_x)) </span></p>
+
+<p><span class='math'> \hat{\beta_1}^{TSLS} = \beta_1 + \cfrac{ \bar{q} }{ \bar{r} } = \beta_1 + \dfrac{var(\bar{r})}{var(\bar{r})} \cdot \dfrac{var({\bar{q}})}{var(\bar{q})} \cdot \cfrac{ \bar{q} }{ \bar{r} } = \beta_1 + \cfrac{ \frac{1}{n} \cdot var({q})}{ \frac{1}{n} \cdot var({r})} \cdot \cfrac{ \bar{q} / var({\bar{q}}) }{ \bar{r} / var({\bar{r}}) } = \beta_1 + \cfrac{ var({q})}{ var({r})} \cdot \cfrac{ \bar{q} / var({\bar{q}}) }{ \bar{r} / var({\bar{r}}) } </span></p>
+
+<p><span class='math'> \hat{\beta_1}^{TSLS} \xrightarrow{p} \beta_1 + \cfrac{ \sigma_{q}}{ \sigma_{r}} \cdot \cfrac{ \bar{q} / \sigma_{\bar{q}} }{ \bar{r} / \sigma_{\bar{r}} } </span></p>
+
+<p><span class='math'> \bar{r} / \sigma_{\bar{r}} \xrightarrow{p} N(0,1) </span></p>
+<p><span class='math'> \bar{q} / \sigma_{\bar{q}} \xrightarrow{p} N(0,1) </span></p>
+
+<p> and since x and e are related, these 2 terms are related, and that makes the distribution complex </p>
+
+<p> when z is relevant, the numerator in the bias term <span class='math'> \dfrac{cov(z,e)}{cov(z,x)}</span> goes to 0. if z is not relevant, the denominator goes to 0 too. that means both numerator and denominator go to zero. that makes life hard for us.</p>
+
+<p> if z is exogenous (numerator to 0) and relevant (denominator approaches some number), then as n becomes large, the numerator gets smaller and smaller, the denominator gets closer and closer to a given number. </p>
+
+<p> how relevant must the instrument be for the normal distribution to provide a good approx in practice >
+
+<h4> enter the first-stage F-test </h4>
+
+</div>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./includes/a.css">
+  <link rel="icon" href="./includes/a.png"> 
+  
+  <script src='./includes/r_box.js'></script>
+  <script src='./includes/r_matrix.js'></script>
+  
+  <!-- the wonderful katex ! -->
+  <link rel="stylesheet" href="./includes/katex/katex.min.css">
+  <script src="./includes/katex/katex.min.js"></script>
+  <script src="./includes/a.js"></script>
+
+  <title> a3 q2 &middot; </title>
+
+</head>
+
+
+<div class='section border margin padding'>
+  <h4> a3 q2 </h4>
+  <img src='./a3_desc/a3_q2.png' />
+</div>
+
+<div class='section border margin padding'>
+
+<p><span class='math'> RSS^{OLS} = \sum \hat{e}^2 = \sum (y - x \hat{\beta}) </span></p>
+<p> under ols, <span class='math'>var(y) = var(\hat{y} + \hat{e}) = var(\hat{y}) + var(\hat{e})</span>, since <span class='math'>cov(\hat{y},\hat{e}) = 0</span></p>
+<p> so <span class='math'>RSS^{OLS} \lt TSS </span></p> 
+
+
+<h4> but for IV </h4>
+<p><span class='math'> RSS^{IV} = \sum \tilde{e}^2 = \sum (y - x \tilde{\beta}) </span></p>
+
+<p><span class='math'> \tilde{\beta} </span> did not come from using x, but rather from <span class='math'> \hat{x} </span>, so it is possible the <span class='math'> RSS^{IV} \gt TSS </span></p>
+
+<p> so it is possible that <span class='math'>RSS^{IV} \gt RSS^{OLS}</span> </p>
+<p> so in that sense, IV will not necessarily fit better than OLS </p>
+<p> but obviously, that's not the point. IV is for estimating the parameters of the structural equation, so why would the R2 matter </p>
+
+</div>

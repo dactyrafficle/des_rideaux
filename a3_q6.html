@@ -23,12 +23,142 @@
 
 
 <div class='section border margin padding'>
-
   <h4> a3 q6 </h4>
+  <p> when selecting the tuning parameter for the LASSO, there is a variance-bias trade-off </p>
+  <p> the objective of this exercise is to examine and discuss this trade-off </p>
+</div>
+
+<div class='section border margin padding'>
+<h4> the model </h4>
+<p> there are 30 regressors. 10 matter. 20 don't. </p>
+<p> the correlation between regressors will be either of the following <span class='math'> \rho = 0.1, 0.7 </span></p>
+<p> the error, <span class='math'>e \backsim N(0, \sigma^2) </span> is homoskedastic where <span class='math'> \sigma^2 = 1, 10 </span> </p> 
+<p> the true model is <span class='math'>y_i = \displaystyle\sum_{i=1}^{10} \alpha_i x_i + e_i </span> where <span class='math'>\alpha_i \backsim \text{unif}(0.5, 1)</span></p>
+</div>
+
+<div class='section border margin padding'>
+
+<h4> approach </h4>
+<p> compare the forecast accuracy in each of the 4 lasso scenarios against the OLS estimates with just the 10 relevant regressors  </p>
+<p> estimate the true linear model as one scenario </p>
+<p> then use lasso to fix the penalty term via cross-validation </p>
+<p> for each lasso scenario, report the following : </p>
+<ul>
+<li><p> bias, </p>
+<li><p> variance, </p>
+<li><p> MSE </p>
+</ul>
+<p> compare them to the OLS model for the last 10 obs in each small dataset in each scenario </p>
+<p> discuss the consequences of using a misspecified linear model chosen by the LASSO as the error variance, correlation and magnitude of the coefficients dropped by the LASSO varies as it selects different number of covariates </p>
+
+</div>
+
+<div class='section border margin padding'>
+
+<pre>
+<!--
+right off the bat, 80 observations is very few
+and 30 variables is many
+so there is a very good chance that unimportant variables will look important
+or even that important variables will look important
+so we might want a model where we can at least confidently use SOME variables in prediction
+-->
+
+</pre>
 
 </div>
 
 
 <div class='section border margin padding'>
+<h4> case 1 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,1) </span></p>
+<li><p><span class='math'> \rho = 0.1 </span></p>
+</ul>
+
+<img src='./a3_desc/a3_q6_sum(abs(beta))_v_log(lambda)_case_1.png' />
+
+</div>
+
+<div class='section border margin padding'>
+<h4> case 2 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,1) </span></p>
+<li><p><span class='math'> \rho = 0.7 </span></p>
+</ul>
+</div>
+
+<div class='section border margin padding'>
+<h4> case 3 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
+<li><p><span class='math'> \rho = 0.1 </span></p>
+</ul>
+</div>
+
+<div class='section border margin padding'>
+<h4> case 4 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
+<li><p><span class='math'> \rho = 0.7 </span></p>
+</ul>
+</div>
+
+<div class='section border margin padding'>
+<pre>
+<span class='comment'># returns a df</span>
+generate_the_regressors = function(n_obs, k_vars, sigma2_x, rho) {
+
+  n = n_obs
+  k = k_vars
+  sigma2_x = sigma2_x
+  rho = rho
+  
+  mu_vector = rep(0, times = k)
+  sigma_vector = rep(c(sigma2_x,rep(rho*sigma2_x, times = k)), length=k*k)
+  sigma_matrix = matrix(sigma_vector, nrow=k) # makes the variance-covariance matrix
+  
+  matrix_data = mvrnorm(n = n,
+                 mu = mu_vector,
+                 Sigma = sigma_matrix,
+                 empirical=TRUE)
+  
+  df = as.data.frame(matrix_data)
+  return(df)
+}</pre>
+</div>
+
+<div class='section border margin padding'>
+<pre>
+<span class='comment'># returns a vector</span>
+generate_the_dependent_variable = function(regressors, sigma2_e) {
+
+  coefficients_vector = runif(10, 0.5, 1)
+
+  e = rnorm(80, 0, sqrt(sigma2_e))
+  
+  y = coefficients_vector[1] * regressors$V1 +
+      coefficients_vector[2] * regressors$V2 +
+      coefficients_vector[3] * regressors$V3 +
+      coefficients_vector[4] * regressors$V4 +
+      coefficients_vector[5] * regressors$V5 +
+      coefficients_vector[6] * regressors$V6 +
+      coefficients_vector[7] * regressors$V7 +
+      coefficients_vector[8] * regressors$V8 +
+      coefficients_vector[9] * regressors$V9 +
+      coefficients_vector[10] * regressors$V10 +
+      e
+
+  return(y)
+}
+
+generate_the_data = function(rho_, sigma2_e_) {
+ x = generate_the_regressors(n_obs = 80, k_vars = 30, sigma2_x = 1, rho = rho_)
+ y = generate_the_dependent_variable(regressors = x, sigma2_e = sigma2_e_)
+ df = data.frame(y,x)
+ return(df)
+}
+
+</pre>
 
 </div>

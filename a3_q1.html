@@ -26,7 +26,7 @@
 <div class='section border margin padding'>
 <h4> a4 q1 part-a : 2sls vs iv reg </h4>
 <pre>
-<span class='comment'># a. 2sls vs ivreg </span>
+<span class='comment'># a : 2SLS vs IV </span>
 
 library(AER)
 
@@ -34,21 +34,28 @@ y = df$log_gdp
 x = df$prot_score
 z = df$log_mort
 
-<span class='comment'># part a : using the instrument </span>
+<span class='comment'># voici je fais du 2SLS </span>
 
-model_s1 = lm(x ~ z)   # returns F-stat = 23.82 > 10 on q=1 restriction and 62 ((n=64) - (k=1) - 1) = 64 - 1 - 1 = 62
+<span class='comment'># first stage</span>
+<span class='comment'># returns F-stat = 23.82 &gt; 10 on q = 1 restriction, and df = (n - k - 1) = (64 - 1 - 1) = 62</span>
+model_s1 = lm(x ~ z)
 summary(model_s1)
 
-x_hat = fitted(model_s1)
+<span class='comment'># first stage estimates</span>
+x_hat = model_s1$fitted.values
 
-<span class='comment'># returns a coefficient 0.90171(0.1256) t = 7.304 </span>
+<span class='comment'># second stage </span>
+<span class='comment'># returns a coefficient 0.91708 (0.11757); t = 7.8003 </span>
 model_s2 = lm(y ~ x_hat)
-summary(model_s2)
+coeftest(model_s2, vcov = vcovHC, type = "HC1")</pre>
+</div>
 
-<span class='comment'># ca vient d'une boite </span>
-<span class='comment'># returns a coefficient 0.91708 (0.16911) </span>
-y_iv = ivreg(y ~ x | z)
-coeftest(y_iv, vcov = vcovHC, type = "HC1")</pre>
+<div class='section border margin padding'>
+<pre>
+<span class='comment'># et l'IV qui vient d'une boite </span>
+<span class='comment'># returns a coefficient 0.91708 (0.16911); t = 5.4299  </span>
+model_iv = ivreg(y ~ x | z)
+coeftest(model_iv, vcov = vcovHC, type = "HC1")</pre>
 </div>
 
 

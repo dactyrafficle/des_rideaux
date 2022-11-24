@@ -55,16 +55,19 @@
 
 <div class='section border margin padding'>
 
-<pre>
-<!--
-right off the bat, 80 observations is very few
-and 30 variables is many
-so there is a very good chance that unimportant variables will look important
-or even that important variables will look important
-so we might want a model where we can at least confidently use SOME variables in prediction
--->
+<h4> variance-bias trade-off </h4>
 
-</pre>
+<p> MSE = (variance) + (bias)^2 </p>
+<p><span class='math'> E[X^2] = var(X) + (E[X])^2 </span></p>
+<p><span class='math'> \text{MSE}(\hat{\theta}) = \text{E}[(\hat{\theta} - \theta)^2] </span></p>
+<p><span class='math'> \text{MSE}(\hat{\theta}) = var(\hat{\theta}) + [\text{bias}(\hat{\theta}, \theta)]^2 </span></p>
+
+<p> the high level is that, if we only care about not being biased, we can stick with OLS </p>
+<p> we might care about that ideologically, but if we unmarry our analysis from this idea, we can explore biased solutions, with lower variance, with the objective being increasing the probability that the true value falls within confidence intervals </p>
+<p> by moving away from OLS, MSE goes down as variance goes down, but to offset that, abs(bias) goes up </p>
+<p> if we limit ourselves to unbiased estimators, then shrinking MSE is the same as shrinking the variance </p>
+
+<p> part of what makes the bias-variance thing so hot is that we want to develop a model that picks out what appears frequently, without overfitting the data. the point is to have sthing that we can generalize. </p>
 
 </div>
 
@@ -106,16 +109,42 @@ so we might want a model where we can at least confidently use SOME variables in
 
 <div class='section border margin padding'>
 <pre>
-<span class='comment'># returns a df</span>
-generate_the_regressors = function(n_obs, k_vars, sigma2_x, rho) {
-
-  n = n_obs
-  k = k_vars
-  sigma2_x = sigma2_x
-  rho = rho
+<span class='comment'># to do a lasso</span>
+do_lasso_and_lasso_related_activities = function(lambda_vector, train_df) {
   
+  # specify and train lasso regression model
+  ctrl_specs = trainControl(method="cv", # cross-validation
+                            number=10,     # number of folds
+                            savePredictions = "all")
+  
+  # specify lasso regression model using the training data # 52/78
+  model = train(y ~ .,
+                data=train_df,
+                preProcess=c("center","scale"),
+                method="glmnet",
+                metric="RMSE",
+                tuneGrid=expand.grid(alpha=1, lambda=lambda_vector),
+                trControl=ctrl_specs,
+                na.action=na.omit) # faire en sorte que blah blah blah
+  
+  return(model)
+}</pre>
+</div>
+
+
+<div class='section border margin padding'>
+<pre>
+<span class='comment'># returns a df</span>
+library('MASS')
+
+# returns a df
+generate_the_data = function(rho, sigma2, coefficients) {
+
+  n = 80
+  k = 30
+
   mu_vector = rep(0, times = k)
-  sigma_vector = rep(c(sigma2_x,rep(rho*sigma2_x, times = k)), length=k*k)
+  sigma_vector = rep(c(1,rep(rho, times = k)), length=k*k)
   sigma_matrix = matrix(sigma_vector, nrow=k) # makes the variance-covariance matrix
   
   matrix_data = mvrnorm(n = n,
@@ -123,42 +152,23 @@ generate_the_regressors = function(n_obs, k_vars, sigma2_x, rho) {
                  Sigma = sigma_matrix,
                  empirical=TRUE)
   
-  df = as.data.frame(matrix_data)
+  e = rnorm(n, 0, sqrt(sigma2))
+  
+  df_x = as.data.frame(matrix_data)
+
+  y = coefficients[1] * df_x$V1 +
+      coefficients[2] * df_x$V2 +
+      coefficients[3] * df_x$V3 +
+      coefficients[4] * df_x$V4 +
+      coefficients[5] * df_x$V5 +
+      coefficients[6] * df_x$V6 +
+      coefficients[7] * df_x$V7 +
+      coefficients[8] * df_x$V8 +
+      coefficients[9] * df_x$V9 +
+      coefficients[10] * df_x$V10 +
+      e
+  
+  df = data.frame(y, df_x)
   return(df)
 }</pre>
-</div>
-
-<div class='section border margin padding'>
-<pre>
-<span class='comment'># returns a vector</span>
-generate_the_dependent_variable = function(regressors, sigma2_e) {
-
-  coefficients_vector = runif(10, 0.5, 1)
-
-  e = rnorm(80, 0, sqrt(sigma2_e))
-  
-  y = coefficients_vector[1] * regressors$V1 +
-      coefficients_vector[2] * regressors$V2 +
-      coefficients_vector[3] * regressors$V3 +
-      coefficients_vector[4] * regressors$V4 +
-      coefficients_vector[5] * regressors$V5 +
-      coefficients_vector[6] * regressors$V6 +
-      coefficients_vector[7] * regressors$V7 +
-      coefficients_vector[8] * regressors$V8 +
-      coefficients_vector[9] * regressors$V9 +
-      coefficients_vector[10] * regressors$V10 +
-      e
-
-  return(y)
-}
-
-generate_the_data = function(rho_, sigma2_e_) {
- x = generate_the_regressors(n_obs = 80, k_vars = 30, sigma2_x = 1, rho = rho_)
- y = generate_the_dependent_variable(regressors = x, sigma2_e = sigma2_e_)
- df = data.frame(y,x)
- return(df)
-}
-
-</pre>
-
 </div>

@@ -24,7 +24,7 @@
 
 <div class='section border margin padding'>
   <h4> a3 q5 </h4>
-  <img src='./a3_desc/a3_q5.png' />
+  <img src='./a3_desc/a3_q5.png' width=700 />
 </div>
 
 <div class='section border margin padding'>
@@ -56,58 +56,36 @@ so, therefore, since E[e|X] \ne 0, E[X^2e] \ne 0, so X^2 is endogenous </pre>
 
 <h4> a3 q5 - part b </h4>
 
-<div class='section border margin padding'>
-<pre>
-x^2 is endogenous, and we need an instrument for it
+<p> we should look at <span class='math'>X</span> and <span class='math'>X^2</span> as 2 separate regressors. so we have 2 endogenous regressors, and thus we need at least 2 valid instruments </p>
+<p> i think that by suggesting the use of <span class='math'>(1, Z, Z^2)</span> as instruments, what is being asked is that we use <span class='math'>Z</span> and <span class='math'>Z^2</span> as instruments for <span class='math'>X</span> and <span class='math'>X^2</span> </p>
 
-The answer to your question is nicely discussed in Wooldridge (2000), Econometric Analysis of Cross Section and Panel Data, section 9.5, page. 236-237.
-There are two approaches you can adopt.
+<p> the first-stage equations become </p>
 
-The first is to use the squares of the other exogenous variables as additional instruments.
+<ul>
+<li><p><span class='math'> X = \gamma_0 + \gamma_1 Z + \gamma_2 Z^2 + u </span></p>
+<li><p><span class='math'> X^2 = \delta_0 + \delta_1 Z + \delta_2 Z^2 + v </span></p>
+</ul>
 
-The second approach requires the use of (xhat)2 as instrument in the second-stage regression.
+<p> the result of the first-stage is : </p>
+<ul>
+<li><p><span class='math'> \hat{X} = \hat{\gamma}_0 + \hat{\gamma}_1 Z + \hat{\gamma}_2 Z^2 </span></p>
+<li><p><span class='math'> \hat{X}^2 = \hat{\delta}_0 + \hat{\delta}_1 Z + \hat{\delta}_2 Z^2 </span></p>
+</ul>
 
-Therefore, after obtaining (xhat) from first-stage regression and squaring this value, you must estimate:
+<p> the model is <span class='inline-code'>just-identified</span>, since we have m=2 endogenous regressors, and k=2 valid instruments </p>
 
-ivreg2 y (x x2 = z (xhat)2 ) c
-</pre>
-</div>
-
-<div class='section border margin padding'>
-<pre>
-12.6 in hansen p336. david card (1995)
-
-Card (1995) also points out that if education is endogenous then so is our measure of experience since it is calculated by subtracting education from age.
-
-He suggests that we can use the variables age and age^2 as instruments for experience and experience^2.
-
-The age variables are exogenous (not choice variables) yet highly correlated with experience and experience^2.
-
-Notice that this approach treats experience^2 as a variable separate from experience. Indeed, this is the correct approach.
-
-</pre>
-</div>
-
-<div class='section border margin padding'>
-<pre>
-https://www.statalist.org/forums/forum/general-stata-discussion/general/1571907-instrumental-variable-and-quadratic-term
-
-https://www.statalist.org/forums/forum/general-stata-discussion/general/1597966-forbidden-regression-quadratic-regression
-
-forbidden regression
-
-angrist and pischke 2008, page 144
-
-If you have x and x-squared as regressors in your equation and if x is endogenous, so is x squared. 
-
-This means that you need (at least) two instruments.
-
-
-Let IV1 be an instrument for x. Then you can use IV1squared as and additional instrument.
-If you have two instruments for x, say z1 and z2, then you should use z1squared, z2squared and z1 multiplied by z2 as additional instruments.
-</pre>
+<p> On page 342 of Hansen, Hansen discusses Card (1995), where age and age^2 are used as instruments for experience and experience^2 </p>
+<p> Hansen notes that Card used experience and experience^2 as distinct regressors, and makes a value judgement affirming the decision </p>
 
 </div>
+
+
+<div class='section border margin padding'>
+
+  <h4> a3 q5 - part c </h4>
+
+  <p> reduced form. </p>
+  <p> under what circumstances are they identified ? </p>
 
 </div>
 

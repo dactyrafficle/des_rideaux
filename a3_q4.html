@@ -26,14 +26,12 @@
 
   <h4> a3 q4 </h4>
 
-  <p> take the linear instrumental variables equation <span class='math'>y_i = \beta_0 + \beta_1 x_i + \beta_2 w_i + e_i</span> , where <span class='math'>z_i</span> is an instrument </p>
-
 <pre>
+take the linear instrumental variables equation <span class='math'>y_i = \beta_0 + \beta_1 x_i + \beta_2 w_i + e_i</span>, where <span class='math'>z_i</span> is an instrument
 
-You are then told that Wi is unavailable. Consider the 2SLS estimator of β1 obtained from the misspecified IV regression, by regressing yi on xi only, using zi as an instrument for xi.
+You are then told that Wi is unavailable. Consider the 2SLS estimator of <span class='math'>\beta_1</span> obtained from the misspecified IV regression, by regressing yi on xi only, using zi as an instrument for xi.
 
-a) Derive the conditions under which your IV estimate of β1 from the misspecified model is
-consistent.
+a) Derive the conditions under which your IV estimate of <span class='math'>\beta_1</span> from the misspecified model is consistent.
 
 b) Find the asymptotic distribution of this IV estimate in part a) as <span class='math'>n \rightarrow \infin</span>.
 
@@ -41,7 +39,7 @@ b) Find the asymptotic distribution of this IV estimate in part a) as <span clas
 
 </div>
 
-
+<!--
 <div class='section border margin padding'>
 
 <div class='box'>
@@ -61,35 +59,35 @@ b) Find the asymptotic distribution of this IV estimate in part a) as <span clas
   <td><span class='math'>x</span></td>
   <td><span class='math'>z</span></td>
   <td><span class='math'>w</span></td>
-  <td><span class='math'>u</span></td>
+  <td><span class='math'>e</span></td>
  </tr>
 
  <tr>
-  <td>x</td>
+  <td><span class='math'>x</span></td>
   <td style='background-color:#ddd;'></td>
   <td style='background-color:#47c7;'><span class='math'>\rho_{xz} \ne 0 </span></td>
   <td style='background-color:#f005;'><span class='math'>\rho_{xw} </span></td>
-  <td style='background-color:#47c7;'><span class='math'>\rho_{xu} \ne 0 </span></td>
+  <td style='background-color:#47c7;'><span class='math'>\rho_{xe} \ne 0 </span></td>
  </tr>
  
  <tr>
-  <td>z</td>
+  <td><span class='math'>z</span></td>
   <td></td>
   <td style='background-color:#ddd;'></td>
   <td style='background-color:#f009;'><span class='math'>\rho_{zw} = 0 </span></td>
-  <td style='background-color:#47c7;'><span class='math'>\rho_{zu} = 0 </span></td>
+  <td style='background-color:#47c7;'><span class='math'>\rho_{ze} = 0 </span></td>
  </tr>
 
  <tr>
-  <td>w</td>
+  <td><span class='math'>w</span></td>
   <td></td>
   <td></td>
   <td style='background-color:#ddd;'></td>
-  <td style='background-color:#47ca;'><span class='math'>\rho_{wu} = 0 </span></td>
+  <td style='background-color:#47ca;'><span class='math'>\rho_{we} = 0 </span></td>
  </tr>
 
  <tr>
-  <td>u</td>
+  <td><span class='math'>e</span></td>
   <td></td>
   <td></td>
   <td></td>
@@ -98,45 +96,47 @@ b) Find the asymptotic distribution of this IV estimate in part a) as <span clas
 
 </table>
 
+</div> -->
+
+<div class='section border margin padding'>
+
+  <h4> A3 Q4 PART-A : THE MISSPECIFIED MODEL </h4>
+  <p> if we use <Span class='math'>z</span> as an instrument for <Span class='math'>x</span>, and without other regressors, then we get this </p>
+  <p><span class='math'> \hat{\beta}_{TSLS} \xrightarrow{p} \dfrac{cov(z,y)}{cov(z,x)} = \dfrac{cov(z,\beta_0 + \beta_1 x + \beta_2 w + e)}{cov(z,x)} = \dfrac{cov(z,\beta_1 x)}{cov(z,x)} + \dfrac{cov(z,\beta_2 w)}{cov(z,x)} + \dfrac{cov(z,e)}{cov(z,x)} = \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + \dfrac{cov(z,e)}{cov(z,x)} </span></p>
+
+  <p><span class='math'> \hat{\beta}_{TSLS} \xrightarrow{p} \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + 0 </span></p>
+
+  <p> so if <span class='math'> \text{corr}(z,w) \ne 0 </span> and <span class='math'>\beta_2 \ne 0 </span>, the estimate is biased, and inconsistent </p>
+  
+  <p> if <span class='math'> \text{corr}(z,w) = 0 </span>, it is consistent </p>
+  <p> and if <span class='math'>\beta_2 = 0 </span>, it is consistent, but our model is mispecified (in spirit, if we really wanted to include <span class='math'>w</span>, that is) </p>
+  
 </div>
 
 <div class='section border margin padding'>
 
-  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,y)}{cov(z,x)} = \dfrac{cov(z,\beta_0 + \beta_1 x + \beta_2 w + u)}{cov(z,x)} = \dfrac{cov(z,\beta_1 x)}{cov(z,x)} + \dfrac{cov(z,\beta_2 w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} = \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} </span></p>
-
-  <p> plim  cov(z,u) = 0 </p>
-  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \plim_{n \rightarrow \infin} \bigg ( \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} \bigg ) </span></p>
-  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \beta_1 + \plim_{n \rightarrow \infin} \bigg (  \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} \bigg ) + 0 </span></p>
+  <h4> A3 Q4 PART-B : THE ASYMPTOTIC DISTRIBUTION </h4>
   
-  <p> <span class='math'> \plim_{n \rightarrow \infin} \hat{\beta}_{TSLS} = \beta_1 + \beta_2 \cdot \dfrac{cov(z, w)}{cov(z,x)} + 0 </span></p>
-
-  <h4> result </h4>
-  <p> if <span class='math'> \text{corr}(z,w) \ne 0 </span> and <span class='math'>\beta_2 \ne 0 </span>, the estimte is biased, and inconsistent </p>
+  <p><span class='math'> \hat{\beta}_{IV} = \beta_1 + \beta_2 \cdot \dfrac{ \frac{1}{n} \sum (z-\mu_z)(w-\mu_w) }{ \frac{1}{n} \sum (z-\mu_z)(x-\mu_x) } + \cfrac{ \frac{1}{n} \sum (z-\mu_z) e }{ \frac{1}{n} \sum (z-\mu_z)(x-\mu_x) } 
+  </span></p>
   
-</div>
-
-<div class='section border margin padding'>
-
-  <h4> the asymptotic distribution </h4>
-  
-  <p> the term beta_2 \cdot etc etc. the plim of that is constant, since cov(z,w) and cov(z,x) are consistent, and z, w, are iid, with variance, so that term is normally distributed </p>
+  <p><span class='math'> \hat{\beta}_{IV} = \beta_1 + \beta_2 \cdot \dfrac{ \frac{1}{n} \sum h }{ \frac{1}{n} \sum r } + \cfrac{ \frac{1}{n} \sum q }{ \frac{1}{n} \sum r } </span></p>
   
 
-  <p> start with the demeaned <span class='math'> y-\bar{y} = \beta_1 (x-\bar{x}) - (u-\bar{u})</span></p>
-  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,y)}{cov(z,x)} = \dfrac{cov(z,\beta_0 + \beta_1 x + u)}{cov(z,x)} = \dfrac{cov(z,\beta_1 x)}{cov(z,x)} + \dfrac{cov(z,u)}{cov(z,x)} = \beta_1 + \dfrac{cov(z,u)}{cov(z,x)} </span></p>
-  <p><span class='math'> \hat{\beta}_{TSLS} = \dfrac{cov(z,u)}{cov(z,x)} </span></p>
-  <p> this is normally distributed </p>
-  <p> first, we showed that plim btsls = \beta_1 </p>
+  <p><span class='math'> \hat{\beta}_{IV} = \beta_1 + \beta_2 \cdot \dfrac{ \bar{h} }{ \bar{r} } + \cfrac{ \bar{q} }{ \bar{r} } </span> <span style='display: inline-block; width: 24px;'> </span> [this is the style of decomposition from SW that I thought was useful] </p>
   
-  <p> when n is large, the numerator is approx q = (Z-mu_z)u </p>
-  <p> q is iid </p>
-  <p> q has variance var[(Z-mu_z)u] </p>
-  <p> therefore, var(q_bar) = var(q)/n </p>
-  <p> and by CLT, q_bar/sd(q_bar) approx N(0,1) </p>
+  <p><span class='math'> \bar{q} \backsim N \big ( 0, \frac{\sigma_q^2}{n} \big )</span>, and <span class='math'> \bar{r} \backsim N \big ( \mu_r, \frac{\sigma_r^2}{n} \big ) </span> which makes <span class='math'> \dfrac{ \bar{q} }{ \bar{r} } </span> normally distributed with mean 0 and variance <Span class='math'>\dfrac{1}{n} \cdot \dfrac{var((z-\mu_z)e)}{[cov(x,z)]^2}</span></p>
   
-  <p> the sample covariance is also consistent, s_zx plim cov(z,x) </p>
-  <p> \beta^{TSLS} \approx \beta_1 + \bar{q} / cov(z,x) is therefore approx normally distributed N(\beta_1, var()) where <span class='math'> var() = \dfrac{1}{n} \cdot \dfrac{ var[(Z-\mu_z)u] }{ (cov(z,x))^2} </span></p>
+  <p> if <span class='math'> \beta_2 = 0 </span> or <span class='math'> cov(z,w) = 0 </span> then that would be the variance of the estimator we're looking at, too </p>
   
-  <p> so even if it was inconsistent, it would still be normally distributed </p>
+  <p> anyhow, the term <span class='math'> \dfrac{ \bar{h} }{ \bar{r} } </span> is a pickle </p>
+  <p><span class='math'> \bar{r} \backsim N \big ( \mu_r, \frac{\sigma_r^2}{n} \big ) </span> so <span class='math'> (\bar{r} - \mu_r) \backsim N \big ( 0, \frac{\sigma_r^2}{n} \big ) </span> and we do the same thing for <span class='math'>\bar{h}</span> </p>
+  <p><span class='math'> \dfrac{ \bar{h} }{ \bar{r} } = \dfrac{ (\bar{h} - \mu_h) + \mu_h }{ (\bar{r}-\mu_r)+\mu_r } = \dfrac{ (\bar{h} - \mu_h) }{ (\bar{r}-\mu_r)+\mu_r } + \dfrac{ \mu_h }{ (\bar{r}-\mu_r)+\mu_r } </span> is a pickle </p>
+  
+  <p> i think that if <span class='math'> corr(x,w) \ne 0</span>, then <span class='math'> \frac{ \bar{h} }{ \bar{r} }</span> is more complex, as numerator and denominator are normal random variables that are correlated </p>
+  <p> even if that doesn't influence whether or not the estimator is consistent, it will make the distribution complex and generally non-normal </p>
+  
+  <p> if <span class='math'> corr(x,w) = 0</span>, then it is still hard </p>
+  <p> the 2 random variables, <span class='math'> \bar{h}</span> and <span class='math'> \bar{r}</span> will not be correlated, but it is still a ratio of 2 normal variables </p>
 
 </div>

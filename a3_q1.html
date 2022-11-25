@@ -24,9 +24,9 @@
 
 
 <div class='section border margin padding'>
-<h4> a4 q1 part-a : 2sls vs iv reg </h4>
+<h4> A4 Q1 PART-A : 2SLS vs IV </h4>
 <pre>
-<span class='comment'># a : 2SLS vs IV </span>
+<span class='comment'># PART A : 2SLS vs IV </span>
 
 library(AER)
 
@@ -39,7 +39,7 @@ z = df$log_mort
 <span class='comment'># first stage</span>
 <span class='comment'># returns F-stat = 23.82 &gt; 10 on q = 1 restriction, and df = (n - k - 1) = (64 - 1 - 1) = 62</span>
 model_s1 = lm(x ~ z)
-summary(model_s1)
+coeftest(model_s1, vcov = vcovHC, type = "HC1")
 
 <span class='comment'># first stage estimates</span>
 x_hat = model_s1$fitted.values
@@ -60,30 +60,40 @@ coeftest(model_iv, vcov = vcovHC, type = "HC1")</pre>
 
 
 <div class='section border margin padding'>
-<h4> a4 q1 part-b : compare to ols </h4>
+<h4> A4 Q1 PART-B : COMPARE TO OLS </h4>
 <pre>
-<span class='comment'># part b : ols </span>
-<span class='comment'># returns a coefficient of 0.52211(0.06119) t = 8.533 </span>
+<span class='comment'># PART B : OLS</span>
+
+<span class='comment'># returns a coefficient 0.522107 (0.049923) t = 10.458 </span>
 model_ols = lm(y ~ x)
-summary(model_ols)
+coeftest(model_ols, vcov = vcovHC, type = "HC1")
 </pre>
 </div>
 
 <div class='section border margin padding'>
-<h4> a4 q1 part-c : hausman test </h4>
+<h4> A4 Q1 PART-C : THE TEST OF HAUSMAN </h4>
+
+<p> in the present context, the test of Hausman is a test to provide evidence for the exogeneity of <span class='math'>x</span> by comparing the estimate of <span class='math'>\beta_1</span> under OLS to an estimate under 2SLS </p>
+
+<p> if <span class='math'>x</span> is really exogenous, then the estimate of <span class='math'>\beta_1</span> from OLS should be similar to the estimate from 2SLS </p>
+<p> how similar? </p>
+<p> it is the Hausman which demonstrated the following expression follows a chi-squared distribution </p>
+
+<p><span class='math'> H = \dfrac{ (\beta_1^{OLS}-\beta_1^{2SLS})^T (\beta_1^{OLS}-\beta_1^{2SLS})}{ ( \text{var}(\beta_1^{OLS}) - \text{var} (\beta_1^{2SLS}) )} </span></p>
+
+<p><span class='math'> H \backsim \chi(df) </span>, where the number of degrees of freedom equals the number of explanatory variables in the model </p>
+
+<p> but <span class='inline-code'>it relies on the assumption of homoskedasticity</span>, since it needs the denominator of the test stat to be a PSD matrix </p>
+
+<p> but homoskedasticity is such a strong strong assumption </p>
+<p> if there is any heterogeneity, the test above is no longer reliable </p>
+<p> so there are lots of ways it can fail </p>
+
+<p> the best you can do is try showing that x is exogenous, given the assumption of homoskedasticity, in which case the test of Hausman does give a measure of the similarity between OLS and IV </p>
 
 <pre>
 
-c. hausman test to compare 2sls vs ols
-
-
-the original Hausman test proposed a test for exogeneity based on a comparison of the OLS and
-2SLS estimators of \beta_1
-
-the general idea is very intuitive: if X is in fact exogenous, then OLS and 2SLS estimators should differ only because of sampling error - i.e. they should not give significantly different results
-
-hausman showed that, under the null hypothesis, the test statistic follows a chi-squared distribution
-
+<span class='comment'># here is some code for STATA </span>
 ivreg y (x = z)
 predict ivresid,residuals
 est store ivreg
@@ -106,26 +116,13 @@ hausman ivreg .                  chi2(1) = 8.29, Prob>chi2 =      0.0040
 <tr><td colspan=3> chi2 : </td><td colspan=1>8.292673423</td></tr>
 </table>
 
-<pre>
-the original hausman test was a test for exogeneity by comparing the ols and 2sls estimators of beta_1
-if x is in fact exogenous, then ols and 2sls estimators should differ only bc of sampling error
-they shouldnt be too different. how different ?
-hausman showed that under the null, the tstat H </pre>
-
-<span class='math'> H = \dfrac{ (\beta_1^{OLS}-\beta_1^{2SLS})^T (\beta_1^{OLS}-\beta_1^{2SLS})}{ ( \text{var}(\beta_1^{OLS}) - \text{var} (\beta_1^{2SLS}) )} </span>
-
-<pre>
-follows a chi-sq distribution where the number of degrees of freedom equals the number of explanatory variables in the model.
-but it relies on the assumption of homoskedasticity, since it needs the denominator of the test stat to be a PSD matrix 
-</pre>
-
 </div>
 
+<!-- opening L0 -->
 <div class='section border margin padding'>
-<h4> a4 q1 part-d : </h4>
+  <h4> A4 Q1 PART-D : THE ESTIMATE OF WALD </h4>
 
 <pre>
-
 d. log_gdp on log_mort, then prot_score on log_mort. explain how we get the iv estimate. wald estimate
    this really does look like an application of FWL
 
@@ -139,12 +136,11 @@ x on z returns :  -.621318
 
 <p> Hansen describes it as the change in Y due to Z over the change in X due to Z </p>
 
-</div>
+</div><!-- closing L0 -->
 
+<!-- opening L0 -->
 <div class='section border margin padding'>
-  
-  <h4> a4 q1 part-e : the math, and a comment on weak instruments </h4>
-
+  <h4> A4 Q1 PART-E : THE MATH, AND A COMMENT ON WEAK INSTRUMENTS </h4>
 
 
 <pre>
@@ -156,15 +152,18 @@ please provide an explanation of why weak instruments are problematic from these
 
 </pre>
 
-if the instruments are weak, the normal distribution provides a poor approx to the sampling distribution of the tsls estimator, even in large samples
+<p> if the instruments are weak, the tsls estimator is no longer asymptotically normal </p>
+<p> so we don't really have any basis for doing the usual statistical inference, as those techniques do not extend to the case when z is weakly relevant </p>
 
-so there is no theoretical justification for the usual methods of performing statistical inference, even in large samples
-95% confidence intervals constructed as the tsls estimator \pm 1.96 SE can contain the true value of the coefficient far less than 95% of the time
+<p> in a nutshell, if the instrument is weak, it can be badly biased towards the ols estimator </p>
+<p> and TSLS is no longer reliable </p>
 
-if the instrument is weak, it can be badly biased towards the ols estimator
+<h4> how weak ? </h4>
+<p> just like in the test of Hausman, where he showed H was approx chi-sq. there, under homoskedasticity, we have some objective measure </p>
+<p> here, the case is more complex </p>
 
-if the instruments are weak, tsls is no longer reliable
 
+<h4> a look at the standard error </h4>
 <p> in this case, we have one endogenous regressor, one instrument, and no exogenous regressors </p>
 <p><span class='math'> \hat{\beta_1}^{TSLS} = \dfrac{s_{zy}}{s_{zx}} \xrightarrow{p} \dfrac{cov(z,y)}{cov(z,x)} = \beta_1 </span></p>
 

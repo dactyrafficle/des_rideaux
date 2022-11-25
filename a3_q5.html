@@ -28,12 +28,11 @@
 </div>
 
 <div class='section border margin padding'>
+  <h4> A3 Q5 PART-A </h4>
 
-<h4> a3 q5 - part a </h4>
+<p><span class='math'>X^2</span> should be treated as endogenous</p>
+
 <pre>
-
-X^2 should be treated as endogenous
-
 from the conditioning theorem
 E[g(X)e] = E[ E[g(X)e|X] ] = E[ g(X) E[e|X] ]
 
@@ -49,12 +48,8 @@ so, therefore, since E[e|X] \ne 0, E[X^2e] \ne 0, so X^2 is endogenous </pre>
 
 </div>
 
-
-
-
 <div class='section border margin padding'>
-
-<h4> a3 q5 - part b </h4>
+  <h4> A3 Q5 PART-B </h4>
 
 <p> we should look at <span class='math'>X</span> and <span class='math'>X^2</span> as 2 separate regressors. so we have 2 endogenous regressors, and thus we need at least 2 valid instruments </p>
 <p> i think that by suggesting the use of <span class='math'>(1, Z, Z^2)</span> as instruments, what is being asked is that we use <span class='math'>Z</span> and <span class='math'>Z^2</span> as instruments for <span class='math'>X</span> and <span class='math'>X^2</span> </p>
@@ -77,16 +72,17 @@ so, therefore, since E[e|X] \ne 0, E[X^2e] \ne 0, so X^2 is endogenous </pre>
 <p> On page 342 of Hansen, Hansen discusses Card (1995), where age and age^2 are used as instruments for experience and experience^2 </p>
 <p> Hansen notes that Card used experience and experience^2 as distinct regressors, and makes a value judgement affirming the decision </p>
 
+
 </div>
 
 
 <div class='section border margin padding'>
+  <h4> A3 Q5 PART-C : THE REDUCED FORM </h4>
+  <p> the reduced form, I've got that in PART-B </p>
 
-  <h4> a3 q5 - part c </h4>
-
-  <p> reduced form. </p>
-  <p> under what circumstances are they identified ? </p>
-
+  <p> in OLS, when we regress Y on X, we need to make sure we don't have perfect multicollinearity. for example, one of the columns is an exact multiple of another column. like, if you included age and double_age in a regression on something, where age was age, and double_age was age but multiplied by some integer, like 2 </p>
+  <p> it's the same thing here, except we're using <span class='math'>\hat{X}</span></p>
+  <p> so in this case, the column vectors <span class='math'> \hat{X}_1</span> and <span class='math'>\hat{X}_2</span> cannot be linear combinations of each other </p>
 </div>
 
 

@@ -21,11 +21,9 @@
 
 </head>
 
-
-
 <div class='section border margin padding'>
 <h4> A4 Q1 PART-A : 2SLS vs IV </h4>
-<pre>
+<pre class='margin padding' style='color: #239e;'>
 <span class='comment'># PART A : 2SLS vs IV </span>
 
 library(AER)
@@ -37,7 +35,8 @@ z = df$log_mort
 <span class='comment'># voici je fais du 2SLS </span>
 
 <span class='comment'># first stage</span>
-<span class='comment'># returns F-stat = 23.82 &gt; 10 on q = 1 restriction, and df = (n - k - 1) = (64 - 1 - 1) = 62</span>
+<span class='comment'># returns a coefficient -0.62132 (0.15222); t = -4.0818 </span>
+<span class='comment'># returns (HO) F-stat = 23.82 &gt; 10 on q = 1 restriction, and df = (n - k - 1) = (64 - 1 - 1) = 62</span>
 model_s1 = lm(x ~ z)
 coeftest(model_s1, vcov = vcovHC, type = "HC1")
 
@@ -51,7 +50,7 @@ coeftest(model_s2, vcov = vcovHC, type = "HC1")</pre>
 </div>
 
 <div class='section border margin padding'>
-<pre>
+<pre class='margin padding' style='color: #239e;'>
 <span class='comment'># et l'IV qui vient d'une boite </span>
 <span class='comment'># returns a coefficient 0.91708 (0.16911); t = 5.4299  </span>
 model_iv = ivreg(y ~ x | z)
@@ -61,7 +60,7 @@ coeftest(model_iv, vcov = vcovHC, type = "HC1")</pre>
 
 <div class='section border margin padding'>
 <h4> A4 Q1 PART-B : COMPARE TO OLS </h4>
-<pre>
+<pre class='margin padding' style='color: #239e;'>
 <span class='comment'># PART B : OLS</span>
 
 <span class='comment'># returns a coefficient 0.522107 (0.049923) t = 10.458 </span>
@@ -77,64 +76,152 @@ coeftest(model_ols, vcov = vcovHC, type = "HC1")
 
 <p> if <span class='math'>x</span> is really exogenous, then the estimate of <span class='math'>\beta_1</span> from OLS should be similar to the estimate from 2SLS </p>
 <p> how similar? </p>
-<p> it is the Hausman which demonstrated the following expression follows a chi-squared distribution </p>
+<p> the Hausman test stat follows a chi-squared distribution, and <strong>in the present case</strong>, with one variable, we're looking at the following expression : </p>
 
-<p><span class='math'> H = \dfrac{ (\beta_1^{OLS}-\beta_1^{2SLS})^T (\beta_1^{OLS}-\beta_1^{2SLS})}{ ( \text{var}(\beta_1^{OLS}) - \text{var} (\beta_1^{2SLS}) )} </span></p>
-
-<p><span class='math'> H \backsim \chi(df) </span>, where the number of degrees of freedom equals the number of explanatory variables in the model </p>
+<p><span class='math'> H = \cfrac{ (\beta_1^{OLS}-\beta_1^{2SLS})^2 }{ \big [ \text{var}(\beta_1^{IV}) - \text{var} (\beta_1^{OLS}) \big ] } </span>, where <span class='math'> H \backsim \chi(1) </span></p>
+<p> the number of degrees of freedom equals the number of explanatory variables in the model </p>
 
 <p> but <span class='inline-code'>it relies on the assumption of homoskedasticity</span>, since it needs the denominator of the test stat to be a PSD matrix </p>
 
 <p> but homoskedasticity is such a strong strong assumption </p>
 <p> if there is any heterogeneity, the test above is no longer reliable </p>
-<p> so there are lots of ways it can fail </p>
+<p> we can use the Hausman test to provide evidence that x is exogenous if the test fails to reject the null. but if it does reject the null, it doesn't mean that x isn't exogenous. so maybe it is a high bar. </p>
+</div>
 
-<p> the best you can do is try showing that x is exogenous, given the assumption of homoskedasticity, in which case the test of Hausman does give a measure of the similarity between OLS and IV </p>
-
-<pre>
-
+<div class='section border margin padding'>
+<h4> a detour in STATA </h4>
+<pre class='margin padding' style='color: #239e;'>
 <span class='comment'># here is some code for STATA </span>
-ivreg y (x = z)
-predict ivresid,residuals
+import delimited "C:\Xampp\htdocs\_852_a3\a3_desc\iv_ajr_data.csv"
+rename log_gdp y
+rename prot_score x
+rename log_mort z
+
+ivreg y (x = z) <span class='comment'># returns 0.917079 (0.1501859) t = 6.11 </span>
+</pre>
+
+<p> i am very confused by this SE so I will verify it. from page 352 of Hansen, theorem 12.2 shows how to get the homoskedasticity-only standard error, which is what I want for this test </p>
+
+<p><span class='math'> V(\hat{\beta}_{IV}) = (Z^TX)^{-1}Z^TDZ(Z^TX)^{-1} </span>, where <span class='math'> D = \text{diag}(\sigma^2) </span></p>
+<p><span class='math'> Z^TX = \begin{bmatrix} n & \sum x \\ \sum z & \sum xz \end{bmatrix} </span></p>
+<p><span class='math'> (Z^TX)^{-1} = \begin{bmatrix} n & \sum x \\ \sum z & \sum xz \end{bmatrix} </span></p>
+<p><span class='math'> Z^TDZ = \sigma^2 \begin{bmatrix} n & \sum z \\ \sum z & \sum z^2 \end{bmatrix} </span></p>
+
+<div id='zTx'></div>
+<div id='zTx_decomp'></div>
+
+<script>
+
+window.addEventListener('load', function(){
+
+  let x = fetch('./a3_desc/a3_q1_matrix_x.json').then(r => r.json());
+  let z = fetch('./a3_desc/a3_q1_matrix_z.json').then(r => r.json());
+
+  Promise.all([x, z]).then((r) => {
+
+    let x = r[0];
+    let z = r[1];
+    console.log(x);
+    console.log(z);
+    let zT = rafficot.get_transpose(z);
+    let zTx = rafficot.get_product(zT, x);
+    let zTx_inv = rafficot.get_inverse(zTx);
+    
+    let D = [];
+    for (let y = 0; y < 64; y++) {
+      D[y] = [];
+      for (let x = 0; x < 64;x++) {
+        D[y][x] = 0;
+        if (y === x) {
+          D[y][y] =  0.850619718514503;
+        }
+      }
+    }
+    
+    
+    let zTD = rafficot.get_product(zT, D);
+    let zTDz = rafficot.get_product(zTD, z);
+    
+    let zTx_invzTDz = rafficot.get_product(zTx_inv, zTDz);
+    let V = rafficot.get_product(zTx_invzTDz, zTx_inv);
+    
+    zTx_decomp.appendChild(rafficot.show_expression(
+      'V','=',
+      rafficot.show_matrix({arr:zTx_inv,'decimal_places':5}),
+      rafficot.show_matrix({arr:zTDz,'decimal_places':5}),
+      rafficot.show_matrix({arr:zTx_inv,'decimal_places':5}),
+      '=',
+      rafficot.show_matrix({arr:V,'decimal_places':5})
+      ));
+    
+    
+  });
+
+});
+
+</script>
+
+<p> <span class='math'>V_{22} =  0.022555799</span> is what im after and taking the sqrt() gives <span class='math'>SE(\hat{\beta}_{IV}) = 0.15018588 </span> and that is the SE I get from STATA </p>
+
+<p> it turns out R uses HC1 by default, even for IV, as the robust option in STATA gives the same result. </p>
+<pre class='margin padding' style='color: #239e;'>
+<!-- ivreg y (x = z), robust <span class='comment'># reports HC1</span>-->
+ivreg y (x = z) <span class='comment'># returns 0.917079 (0.1501859) t = 6.11 </span>
+predict ivresid, residuals
 est store ivreg
 reg y x
-hausman ivreg ., constant sigmamore df(1)
+<!-- hausman ivreg ., constant sigmamore df(1)
 hausman ivreg ., sigmamore df(1)
 hausman ivreg ., df(1)
 
 hausman ivreg .,constant         chi2(2) = 8.29, Prob>chi2 =      0.0158
-hausman ivreg .                  chi2(1) = 8.29, Prob>chi2 =      0.0040
-
-</pre>
+-->
+hausman ivreg . <span class='comment'># chi2(1) = 8.29, Prob>chi2 = 0.0040 </span></pre>
 
 <table class='mytables'>
 <tr><td></td><td>ols</td><td>tsls</td></tr>
-<tr><td>coefficient </td><td> 0.522107</td><td>0.9170797</td><td>0.156003434 </td></tr>
+<tr><td>coefficient </td><td> 0.522107</td><td>0.9170797</td></tr>
 <tr><td>SE </td><td> 0.061185	</td><td> 0.1501859	 </td></tr>
-<tr><td>var </td><td> 0.003743604 </td><td> 0.022555805	</td><td> 0.0188122 </td></tr>
-
-<tr><td colspan=3> chi2 : </td><td colspan=1>8.292673423</td></tr>
+<tr><td>var </td><td> 0.003744 </td><td> 0.0225558	</td></tr>
 </table>
 
+<p><span class='math'> H = \dfrac{(0.9170797-0.522107)^2}{(0.022555805-0.003743604)} = 8.29267313 </span></p>
+<p><span class='math'> \Pr(x \gt H | df=1) = 0.003980535 </span></p>
+<p> so this test fails the null hypothesis that X is exogenous </p>
+<p> but that does not mean that X is not not exogenous </p>
+<p> the test really only provides useful information if it fails to reject the null, which would provide evidence that X is exogenous. the test fails to fail if H is small. so if the test doesnt fail to fail using HO-only SEs which are small to begin with, the correct SEs probably wont move you over that line </p>
+
+<p> 
 </div>
 
 <!-- opening L0 -->
 <div class='section border margin padding'>
   <h4> A4 Q1 PART-D : THE ESTIMATE OF WALD </h4>
 
-<pre>
-d. log_gdp on log_mort, then prot_score on log_mort. explain how we get the iv estimate. wald estimate
-   this really does look like an application of FWL
+<p> if we regress log_gdp (y) on log_mort (z), then prot_score (x) on log_mort (z), we can produce the IV estimate </p>
+<ul>
+  <li><p> y on z gives <span class='math'> \hat{\beta}_{yz} = \dfrac{cov(y,z)}{var(z)} </span></p>
+  <li><p> x on z gives <span class='math'> \hat{\beta}_{xz} = \dfrac{cov(x,z)}{var(z)} </span></p>
+</ul>
 
-the wald estimator, 12.11 of hansen p343
-y on z returns : -.5697981
-x on z returns :  -.621318
- 
-</pre>
+<p><span class='math'> \dfrac{\hat{\beta}_{yz}}{\hat{\beta}_{xz}} = \dfrac{cov(y,z)}{var(z)} \cdot \dfrac{var(z)}{cov(x,z)} = \dfrac{cov(y,z)}{cov(x,z)} = \hat{\beta}_{IV} </span></p>
 
-<span class='math'> \hat{\beta} = \dfrac{-0.5697981}{-0.621318} =  0.917079660 </span></p>
+<pre class='margin padding' style='color: #239e;'>
+model_yz = lm(y ~ z)
+b_yz = coef(coeftest(model_yz, vcov = vcovHC, type = "HC1"))
+b_yz[2] <span class='comment'># returns -0.5697981 </span>
 
-<p> Hansen describes it as the change in Y due to Z over the change in X due to Z </p>
+model_xz = lm(x ~ z)
+b_xz = coef(coeftest(model_xz, vcov = vcovHC, type = "HC1"))
+b_xz[2] <span class='comment'># returns -0.621318 </span>
+
+b_yz[2] / b_xz[2] <span class='comment'># returns 0.9170796</span>
+
+(cov(y,z) / var(z)) / (cov(x,z) / var(z)) <span class='comment'># returns 0.9170796</span></pre>
+
+<span class='math'> \hat{\beta}_{IV} = \dfrac{-0.5697981}{-0.621318} =  0.917079660 </span></p>
+
+<p> Hansen discusses it also in chapter 12.11, and describes it as the change in Y due to Z over the change in X due to Z </p>
 
 </div><!-- closing L0 -->
 
@@ -142,64 +229,47 @@ x on z returns :  -.621318
 <div class='section border margin padding'>
   <h4> A4 Q1 PART-E : THE MATH, AND A COMMENT ON WEAK INSTRUMENTS </h4>
 
+<p> PART-A works because of this </p>
+<p> if the true model is this : <span class='math'> y = \beta_0 + \beta_1 x + e </p>
+<p> <span class='math'>x</span> on <span class='math'>z</span> gives <span class='math'> \hat{\beta}_{xz} = \dfrac{cov(x,z)}{var(z)} </span></p>
+<p> so <span class='math'> \hat{x} = \gamma_0 + \dfrac{cov(x,z)}{var(z)} \cdot z </span></p>
+<p> <span class='math'>y</span> on <span class='math'> \hat{x}</span> gives <span class='math'> \hat{\beta}_{y\hat{x}} = \dfrac{cov(y,\hat{x})}{var(\hat{x})} = \cfrac{cov \Big ( y,\gamma_0 + \dfrac{cov(x,z)}{var(z)} \cdot z \Big ) }{ var \Big ( \gamma_0 + \dfrac{cov(x,z)}{var(z)} \cdot z \Big )} = \cfrac{ \dfrac{cov(x,z)}{var(z)} \cdot cov( y, z) }{ \Big ( \dfrac{cov(x,z)}{var(z)} \Big )^2 var(z)} = \dfrac{cov(x,z) cov(y,z)}{cov(x,z)^2} = \dfrac{cov(y,z)}{cov(x,z)} </span></p>
 
-<pre>
-e. a-d, do the math. write why weak instruments can be a problem.
+<p> we're using Z to model the changes in <span class='math'>X</span> that are not related to <span class='math'>e</span> </p>
+<p> the OLS estimates are not reliable because <span class='math'>X</span> and <span class='math'>e</span> are related. X changes, and e comes along. so if we need to find the effect of <span class='math'>X</span> on Y, we want to find some way to measure what happens to Y when X changes, while everything else stays the same </p>
+<p> the OLS model is built on the assumption that everything else stays the same, so if we know that isn't the case, then OLS is not the right tool </p>
+<p> IV is the technique that uses a variable <span class='math'>Z</span>, where <span class='math'>cov(z,e) = 0</span>, and <span class='math'>cov(x,z) \ne 0</span>, to capture the changes in <span class='math'>X</span> that have nothing to do with <span class='math'>e</span>. it can't capture the changes in <span class='math'>X</span> if <span class='math'>cov(x,z) = 0</span>. and it won't have nothing to do with <span class='math'>e</span> if <span class='math'>cov(z,e) \ne 0</span>. </p>
+<p> so those 2 criteria are essential </p>
 
-write up each of the regression equations and explain how the coefficients are related
+<h4> on weak instruments </h4>
+<p> a weak instrument is where X and Z are not very strongly correlated </p>
+<p> the problems are as follows </p>
 
-please provide an explanation of why weak instruments are problematic from these equations.
 
-</pre>
-
-<p> if the instruments are weak, the tsls estimator is no longer asymptotically normal </p>
+<p> if the instruments are weak, the TSLS/IV estimator is no longer asymptotically normal </p>
 <p> so we don't really have any basis for doing the usual statistical inference, as those techniques do not extend to the case when z is weakly relevant </p>
-
+<p> that is a problem. with a weak instrument, we can use IV to get an estimate, but we can't infer anything from it </p>
 <p> in a nutshell, if the instrument is weak, it can be badly biased towards the ols estimator </p>
-<p> and TSLS is no longer reliable </p>
-
-<h4> how weak ? </h4>
-<p> just like in the test of Hausman, where he showed H was approx chi-sq. there, under homoskedasticity, we have some objective measure </p>
-<p> here, the case is more complex </p>
-
 
 <h4> a look at the standard error </h4>
 <p> in this case, we have one endogenous regressor, one instrument, and no exogenous regressors </p>
-<p><span class='math'> \hat{\beta_1}^{TSLS} = \dfrac{s_{zy}}{s_{zx}} \xrightarrow{p} \dfrac{cov(z,y)}{cov(z,x)} = \beta_1 </span></p>
+<p><span class='math'> \hat{\beta_1}^{IV} = \dfrac{s_{zy}}{s_{zx}} \xrightarrow{p} \dfrac{cov(z,y)}{cov(z,x)} = \beta_1 </span></p>
 
-<p> as the instrument becomes less relevant, s_{zx} \xrightarrow{p} cov(z,x) = 0 </p>
+<p> as the instrument becomes less relevant, <span class='math'>s_{zx} \xrightarrow{p} cov(z,x) = 0</span></p>
 
-<h4> the denominator goes to 0 </h4>
+<p> there is a decomposition in the appendix of ch12 of Stock and Watson, redefining the sums of squares as q and r, probably because they're easier to type </p>
 
-<p> clearly, the argument that b_tsls is consistent breaks down if z is not relevant </p>
+<p><span class='math'> \hat{\beta_1}^{IV} = \dfrac{s_{yz}}{s_{xz}} = \beta_1 + \cfrac{\frac{1}{n} \cdot (z-\mu_z)e }{ \frac{1}{n} \cdot (z-\mu_z)(x-\mu_x)} = \beta_1 + \cfrac{\frac{1}{n} \cdot q }{ \frac{1}{n} \cdot r} = \beta_1 + \cfrac{ \bar{q} }{ \bar{r} } </span></p>
 
-<p> when z is irrelevant, the large sample distribution of b_tsls is not normal, but rather a distribution of a ratio of 2 normal random variables </p>
+<p> that second term is trouble if <span class='math'>cov(z,e), cov(z,x) = 0</span>, because the bias term is the ratio of 2 numbers both approaching 0. if <span class='math'> \bar{r} </span> approaches some non-zero value, then as <span class='math'> n \rightarrow \infin</span>, it can be treated as a constant. but we can't treat 0 like a constant, so then we're left with an estimate of <span class='math'>\beta_1</span> which has a bias that is a multiple of the ratio of 2 standard normal random variables </p>
 
-<p> the sample average is consistent, so <span class='math'> \bar{x} \xrightarrow{p} \mu_x </span>, and so on </p>
-<p><span class='math'> s_{zx} = \dfrac{1}{n} \cdot (z-\mu_z) (x-\mu_x) = \dfrac{1}{n} \cdot r = \bar{r} </span></p>
-
-<p><span class='math'> var{(\bar{r})} = \frac{var(r)}{n} </span></p>
-
-<p><span class='math'> \hat{\beta_1}^{TSLS} = \beta_1 + \cfrac{\frac{1}{n} \cdot (z-\mu_z)e }{ \frac{1}{n} \cdot (z-\mu_z)(x-\mu_x)} = \beta_1 + \cfrac{\frac{1}{n} \cdot q }{ \frac{1}{n} \cdot r} = \beta_1 + \cfrac{ \bar{q} }{ \bar{r} } </span></p>
-
-<p><span class='math'> var(\bar{r}) = var((z-\mu_z)(x-\mu_x)) </span></p>
-
-<p><span class='math'> \hat{\beta_1}^{TSLS} = \beta_1 + \cfrac{ \bar{q} }{ \bar{r} } = \beta_1 + \dfrac{var(\bar{r})}{var(\bar{r})} \cdot \dfrac{var({\bar{q}})}{var(\bar{q})} \cdot \cfrac{ \bar{q} }{ \bar{r} } = \beta_1 + \cfrac{ \frac{1}{n} \cdot var({q})}{ \frac{1}{n} \cdot var({r})} \cdot \cfrac{ \bar{q} / var({\bar{q}}) }{ \bar{r} / var({\bar{r}}) } = \beta_1 + \cfrac{ var({q})}{ var({r})} \cdot \cfrac{ \bar{q} / var({\bar{q}}) }{ \bar{r} / var({\bar{r}}) } </span></p>
-
-<p><span class='math'> \hat{\beta_1}^{TSLS} \xrightarrow{p} \beta_1 + \cfrac{ \sigma_{q}}{ \sigma_{r}} \cdot \cfrac{ \bar{q} / \sigma_{\bar{q}} }{ \bar{r} / \sigma_{\bar{r}} } </span></p>
+<p><span class='math'> \hat{\beta_1}^{IV} \xrightarrow{p} \beta_1 + \cfrac{ \sigma_{q}}{ \sigma_{r}} \cdot \cfrac{ \bar{q} / \sigma_{\bar{q}} }{ \bar{r} / \sigma_{\bar{r}} } </span></p>
 
 <p><span class='math'> \bar{r} / \sigma_{\bar{r}} \xrightarrow{p} N(0,1) </span></p>
 <p><span class='math'> \bar{q} / \sigma_{\bar{q}} \xrightarrow{p} N(0,1) </span></p>
 
-<p> and since x and e are related, these 2 terms are related, and that makes the distribution complex </p>
-
-<p> when z is relevant, the numerator in the bias term <span class='math'> \dfrac{cov(z,e)}{cov(z,x)}</span> goes to 0. if z is not relevant, the denominator goes to 0 too. that means both numerator and denominator go to zero. that makes life hard for us.</p>
-
-<p> if z is exogenous (numerator to 0) and relevant (denominator approaches some number), then as n becomes large, the numerator gets smaller and smaller, the denominator gets closer and closer to a given number. </p>
-
-<p> how relevant must the instrument be for the normal distribution to provide a good approx in practice >
-
-<h4> enter the first-stage F-test </h4>
-
+<p> as <span class='math'>cov(x,z)</span> decreases, the normal distribution is an increasingly poor approximation of asympototic behaviour. that renders inutile our preferred tools of statistical inference </p>
+<p> and that the discussions surrounding where that line is drawn, weak or not-weak, are themselves complex, what is complex is rendered more complex </p>
+<p> so sometimes we just look for a first-stage F-stat bigger than 10 </p>
 </div>
 

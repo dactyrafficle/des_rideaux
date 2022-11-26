@@ -24,7 +24,7 @@
 
 <div class='section border margin padding'>
   <h4> a3 q6 </h4>
-  <p> when selecting the tuning parameter for the LASSO, there is a variance-bias trade-off. the objective of this exercise is to examine and discuss this trade-off </p>
+  <p> solutions via LASSO present a trade-off between variance and bias. this trade-off evolves with the tuning parameter <span class='math'>\lambda</span>. the objective of this exercise is to examine and discuss this trade-off </p>
 </div>
 
 <div class='section border margin padding'>
@@ -40,7 +40,17 @@
 
 <div class='section border margin padding'>
 
-<h4> compare lasso vs ols : approach </h4>
+<h4> LASSO vs OLS : a comparison </h4>
+
+<p> we'll compare LASSO vs OLS by looking at the following : </p>
+
+<ul>
+<li><p> bias, </p>
+<li><p> variance, </p>
+<li><p> MSE </p>
+</ul>
+
+<p> and we'll do it as follows : </h4>
 
 <ul>
  <li><p> there are 4 sets. a set defines the specs, <span class='math'> \rho </span> and <span class='math'> \sigma^2 </p>
@@ -50,36 +60,218 @@
  <li><p> perform ols on <span class='math'>N_1</span> using <span class='math'>X_1</span> to generate another model, and test on <span class='math'>N_2</span> </p>
 </ul>
 
-<p> we're looking to compare the following : </p>
-<ul>
-<li><p> bias, </p>
-<li><p> variance, </p>
-<li><p> MSE </p>
-</ul>
-<p> compare them to the OLS model for the last 10 obs in each small dataset in each scenario </p>
-<p> discuss the consequences of using a misspecified linear model chosen by the LASSO as the error variance, correlation and magnitude of the coefficients dropped by the LASSO varies as it selects different number of covariates </p>
-
 </div>
 
 <div class='section border margin padding'>
 
 <h4> variance-bias trade-off </h4>
+
 <p> we can start in very general terms, with <span class='math'> E[X^2] = \text{var}(X) + (E[X])^2 </span>, and let <span class='math'>X = \theta  - \hat{\theta} </span></p>
 
 <p><span class='math'> \begin{aligned} E[(\theta  - \hat{\theta})^2] &= var(\theta  - \hat{\theta}) + (E[\theta  - \hat{\theta}])^2 \\ \text{MSE}(\hat{\theta}) &= \text{var}(\hat{\theta}) + (E[\theta  - \hat{\theta}])^2 &\text{ where } \theta \text{ is a constant} \\ &= \text{var}(\hat{\theta}) + \big [ \text{BIAS}(\hat{\theta}) \big ] ^2 &\text{ } \end{aligned} </span></p>
 
 <p> LASSO considers biased estimates <span class='math'>\hat{\theta}</span> with the objective of minimizing <span class='math'>\text{MSE}(\hat{\theta})</span>. if we consider only unbiased estimates, we can stick with OLS, which minimizes MSE contingent on that unbiasedness. that is the same as finding the unbiased estimator with the smallest variance. but a variance lower than that, despite a bias, may increase the predictive ability of the model. LASSO helps us export this trade-off </p>
 
+<div class='box'>
+  <h4> to calculate the bias </h4>
+  <p> for each set, i can calculate <span class='math'> \beta_i - \hat{\beta}_i</span></p>
+  <p> and then i will calculate the bias as <span class='math'> \big [ \text{BIAS}(\hat{\beta}) \big ]^2 = \sum (\beta_i - \hat{\beta}_i)^2 </span></p>
+  <p> i don't know if this is a good approach, but it seems sensible to me that it be calculated thusly </p>
+  <p> look at the picture of geometry </p>
+  <p> it is what i had in mind </p>
+  <!--
+  <p><span class='math'> (\beta_1, \beta_2)</span></p>
+  <p><span class='math'> (\hat{\beta_1}, \hat{\beta_2})</span></p>
+  <p><span class='math'> (\hat{\beta_1} - \beta_1)^2 + </span></p>
+  <p><span class='math'> (\hat{\beta_2} - \beta_2)^2 = \text{BIAS}^2 </span></p>
+  -->
 </div>
 
+<div class='box'><img src='./a3_desc/a3_q6_bias.png' width=500 /></div>
+
+</div>
 
 <div class='section border margin padding'>
+
+  <h4> observations </h4>
+  
+  <p> many </p>
+
+</div>
+
+<div class='section border margin padding'>
+<div class='box margin'>
 <h4> case 1 </h4>
 <ul>
 <li><p><span class='math'> e_i \backsim N(0,1) </span></p>
 <li><p><span class='math'> \rho = 0.1 </span></p>
+<li><p><span class='math'> n = 1062</span></p>
+</ul>
+</div>
+
+<div class='box margin padding'>
+
+<table class='mytables'>
+ <tr>
+  <td>x</td>
+  <td>avg LAMBDA</td>
+  <td>avg MSE</td>
+  <td>avg SS(BIAS)</td>
+ </tr>
+ <tr>
+  <td> LASSO </td>
+  <td> 0.0956181 </td>
+  <td> 1.6361396 </td>
+  <td> 0.3299433 </td>
+ </tr>
+ <tr>
+  <td>OLS (X1)</td>
+  <td>0</td>
+  <td>1.2221409</td>
+  <td>0.1529624</td>
+ </tr>
+ <tr>
+  <td>OLS (X1 + X2)</td>
+  <td>0</td>
+  <td>1.8125107</td>
+  <td>0.5054554</td>
+ </tr>
+</table>
+
+</div>
+
+
+</div>
+
+<div class='section border margin padding'>
+<div class='box margin'>
+<h4> case 2 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,1) </span></p>
+<li><p><span class='math'> \rho = 0.7 </span></p>
+<li><p><span class='math'> n = 1193</span></p>
+</ul>
+</div>
+
+<div class='box margin padding'>
+<table class='mytables'>
+ <tr>
+  <td>x</td>
+  <td>avg LAMBDA</td>
+  <td>avg MSE</td>
+  <td>avg SS(BIAS)</td>
+ </tr>
+ <tr>
+  <td>LASSO</td>
+  <td>0.0796538</td>
+  <td>1.4113691</td>
+  <td>0.8377712</td>
+ </tr>
+ <tr>
+  <td>OLS (X1)</td>
+  <td>0</td>
+  <td>1.1880482</td>
+  <td>0.4459527</td>
+ </tr>
+ <tr>
+  <td>OLS (X1 + X2)</td>
+  <td>0</td>
+  <td>1.7950207</td>
+  <td>1.5295842</td>
+ </tr>
+</table>
+</div>
+
+</div>
+
+<div class='section border margin padding'>
+
+<div class='box margin'>
+<h4> case 3 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
+<li><p><span class='math'> \rho = 0.1 </span></p>
+<li><p><span class='math'> n = 1143</span></p>
 </ul>
 
+</div>
+
+<div class='box margin padding'>
+<table class='mytables'>
+ <tr>
+  <td>x</td>
+  <td>avg LAMBDA</td>
+  <td>avg MSE</td>
+  <td>avg SS(BIAS)</td>
+ </tr>
+ <tr>
+  <td>LASSO</td>
+  <td>0.3550883</td>
+  <td>18.037134</td>
+  <td>2.7297936</td>
+ </tr>
+ <tr>
+  <td>OLS (X1)</td>
+  <td>0</td>
+  <td>14.1070023</td>
+  <td>1.5038558</td>
+ </tr>
+ <tr>
+  <td>OLS (X1 + X2)</td>
+  <td>0</td>
+  <td>20.3491197</td>
+  <td>5.0342871</td>
+ </tr>
+</table>
+</div>
+
+</div>
+
+<div class='section border margin padding'>
+
+<div class='box margin'>
+<h4> case 4 </h4>
+<ul>
+<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
+<li><p><span class='math'> \rho = 0.7 </span></p>
+<li><p><span class='math'> n = 1038</span></p>
+</ul>
+</div>
+
+<div class='box margin padding'>
+<table class='mytables'>
+ <tr>
+  <td>x</td>
+  <td>avg LAMBDA</td>
+  <td>avg MSE</td>
+  <td>avg SS(BIAS)</td>
+ </tr>
+ <tr>
+  <td>LASSO</td>
+  <td>0.2951518</td>
+  <td>13.9424783</td>
+  <td>5.2112885</td>
+ </tr>
+ <tr>
+  <td>OLS (X1)</td>
+  <td>0</td>
+  <td>12.9274584</td>
+  <td>4.5191973</td>
+ </tr>
+ <tr>
+  <td>OLS (X1 + X2)</td>
+  <td>0</td>
+  <td>19.0397083</td>
+  <td>15.2133095</td>
+ </tr>
+</table>
+</div>
+
+</div>
+
+<div>
+
+<div class='box margin'><img src='./a3_desc/a3_q6_MSE_case_1.png' /></div>
 
 <img src='./a3_desc/a3_q6_sum(abs(beta))_histogram_case_1.png' />
 
@@ -88,46 +280,35 @@
 </div>
 
 <div class='section border margin padding'>
-<h4> case 2 </h4>
-<ul>
-<li><p><span class='math'> e_i \backsim N(0,1) </span></p>
-<li><p><span class='math'> \rho = 0.7 </span></p>
-</ul>
-</div>
+<pre>
+rm(list = ls())   <span class='comment'># CLEAR VARIABLES</span>
+dev.off()         <span class='comment'># REMOVE GRAPHICS</span>
 
-<div class='section border margin padding'>
-<h4> case 3 </h4>
-<ul>
-<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
-<li><p><span class='math'> \rho = 0.1 </span></p>
-</ul>
-</div>
-
-<div class='section border margin padding'>
-<h4> case 4 </h4>
-<ul>
-<li><p><span class='math'> e_i \backsim N(0,10) </span></p>
-<li><p><span class='math'> \rho = 0.7 </span></p>
-</ul>
+<span style='color:#00f;'>library</span>(MASS)
+<span style='color:#00f;'>library</span>(caret)
+<span style='color:#00f;'>library</span>(ggplot2)
+<span style='color:#00f;'>source</span>("a3_q6_generate_the_data.R")
+<span style='color:#00f;'>source</span>("a3_q6_execute_lasso.R")
+<span style='color:#00f;'>source</span>("a3_q6_do_a_set.R")</pre>
 </div>
 
 <div class='section border margin padding'>
 <pre>
 <span class='comment'># to do a lasso</span>
-do_lasso_and_lasso_related_activities = function(lambda_vector, train_df) {
+do_lasso_and_lasso_related_activities = function(lambda_vector_, train_df_) {
   
-  # specify and train lasso regression model
-  ctrl_specs = trainControl(method="cv", # cross-validation
-                            number=10,     # number of folds
-                            savePredictions = "all")
+  <span class='comment'># specify the specs</span>
+  ctrl_specs = trainControl(method="cv",   <span class='comment'># cross-validation</span>
+                            number=10,     <span class='comment'># number of folds</span>
+                            savePredictions = "final") <span class='comment'># au lieu de 'all'</span>
   
-  # specify lasso regression model using the training data # 52/78
+  <span class='comment'># specify more specs</span>
   model = train(y ~ .,
-                data=train_df,
+                data=train_df_,
                 preProcess=c("center","scale"),
                 method="glmnet",
                 metric="RMSE",
-                tuneGrid=expand.grid(alpha=1, lambda=lambda_vector),
+                tuneGrid=expand.grid(alpha=1, lambda=lambda_vector_),
                 trControl=ctrl_specs,
                 na.action=na.omit) # faire en sorte que blah blah blah
   
@@ -139,9 +320,6 @@ do_lasso_and_lasso_related_activities = function(lambda_vector, train_df) {
 <div class='section border margin padding'>
 <pre>
 <span class='comment'># returns a df</span>
-library('MASS')
-
-# returns a df
 generate_the_data = function(rho, sigma2, coefficients) {
 
   n = 80
@@ -174,5 +352,76 @@ generate_the_data = function(rho, sigma2, coefficients) {
   
   df = data.frame(y, df_x)
   return(df)
+}</pre>
+</div>
+
+<div class='section border margin padding'>
+<pre>
+<span class='comment'># IVE GIVEN DEFAULT VALUES SO THAT I CAN TEST THIS FUNCTION MORE EASILY</span>
+DO_ONE_SET = function(RHO_ = 0.1, SIGMA2_ = 1.0, COEFFICIENTS_ = c(runif(10,0.5,1), rep(0, times=20))) {
+  
+  <span class='comment'># GENERATE THE DATA, PARTITION INTO TRAIN (N1) AND TEST (N2)</span>
+  df = generate_the_data(RHO_, SIGMA2_, COEFFICIENTS_)
+  index = createDataPartition(df$y, group=c(71), list=FALSE, times=1)
+  TRAINING = df[index,] # retain what appears in index
+  N2 = df[-index,] # retain only what does not appear in index
+  
+  TRAINING.Y = TRAINING[,1]
+  TRAINING.X1 = TRAINING[,2:11]
+  TRAINING.X2 = TRAINING[,12:31]
+  
+  DF.GOOD = as.data.frame(cbind(TRAINING.Y, TRAINING.X1))
+  DF.FULL = as.data.frame(cbind(TRAINING.Y, TRAINING.X1, TRAINING.X2))
+  
+  model.OLS.GOOD = lm(TRAINING.Y ~ . - 1, data=DF.GOOD) # the well-specified model
+  model.OLS.FULL = lm(TRAINING.Y ~ . - 1, data=DF.FULL) # the one with everything
+  
+  lambda_vector = 10^seq(-2, -0.6, length=100)
+  model.LASSO = do_lasso_and_lasso_related_activities(lambda_vector_ = lambda_vector, train_df_ = TRAINING)
+
+  
+  <span class='comment'># PREDICTIONS ON N2</span>
+  predict.LASSO = predict(model.LASSO, newdata=N2)
+  predict.OLS.GOOD = predict(model.OLS.GOOD, newdata=N2)
+  predict.OLS.FULL = predict(model.OLS.FULL, newdata=N2)
+  
+  # CALCULATE MSE
+
+  rmse.OLS.FULL = RMSE(predict.OLS.FULL, N2$y)
+  MSE.OLS.FULL = (rmse.OLS.FULL)^2
+  
+  rmse.LASSO = RMSE(predict.LASSO, N2$y)
+  MSE.LASSO = (rmse.LASSO)^2
+  
+  rmse.OLS.GOOD = RMSE(predict.OLS.GOOD, N2$y)
+  MSE.OLS.GOOD = (rmse.OLS.GOOD)^2
+  
+  # CALCULATE THE SS(BIAS)
+  
+  coef.OLS.FULL = model.OLS.FULL$coefficients
+  bias.OLS.FULL = COEFFICIENTS_ - coef.OLS.FULL
+  SSB.OLS.FULL = sum(bias.OLS.FULL^2)
+  
+  coef.OLS.GOOD = c(model.OLS.GOOD$coefficients, rep(0, times=20))
+  bias.OLS.GOOD = COEFFICIENTS_ - coef.OLS.GOOD
+  SSB.OLS.GOOD = sum(bias.OLS.GOOD^2)
+  
+  # THE LASSO COEFFICIENTS : [1] is the intercept, remove it
+  coef.LASSO = coef(model.LASSO$finalModel, model.LASSO$finalModel$lambdaOpt)[2:31]
+  bias.LASSO = COEFFICIENTS_ - coef.LASSO
+  SSB.LASSO = sum(bias.LASSO^2)
+  
+  <span class='comment'># USEFUL THINGS TO RETURN</span>
+  obj = list(
+    lambda = model.LASSO$bestTune$lambda,
+    MSE.OLS.FULL = (rmse.OLS.FULL)^2,
+    MSE.LASSO = (rmse.LASSO)^2,
+    MSE.OLS.GOOD = (rmse.OLS.GOOD)^2,
+    SSB.OLS.FULL = sum(bias.OLS.FULL^2),
+    SSB.OLS.GOOD = sum(bias.OLS.GOOD^2),
+    SSB.LASSO = sum(bias.LASSO^2)
+  )
+  
+  return(obj)
 }</pre>
 </div>

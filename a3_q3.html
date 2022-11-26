@@ -33,26 +33,16 @@
 
 <pre>
 
-consider a study to evaluate the effect on college student grades of dorm room Internet connections.
+consider a study to evaluate the effect on college student grades (the outcome variable y) of dorm room Internet connections (the treatment variable x)
 
-regress grades ~ dorm_room_internet_connections
-
-in a large dorm, half the rooms are randomly wired for high speed Internet connections (the treatment
-group), and final course grades are collected for all residents. 
+in a large dorm, half the rooms are randomly wired for high speed Internet connections (the treatment group), and final course grades are collected for all residents 
 
 which of the following pose a threat to internal validity, and why?
-
-
-first, before i answer anything, this is a hard question, because there's no formal definition for causality. not really. not without getting weird.
-
-say im a wealthy former student, and want to donate money, and i am considering paying for widespread internet access, and i wanna know if it actually helps the students academic outcomes
-
-so when we look for beta of grades ~ x, what are we looking for ? because there is no logical link between the y and x, so it might be that were looking to see that, if x=1, it might improve efficiency, change behaviors, etc
-
 
 a) Midway through the year, all the male athletes move into a fraternity and drop out of the study
 (their final grades are not observed).
 
+maybe. it depends what we are trying to measure. if we think that <span class='math'>y = \beta_0 + \beta_1 x + u</span>, where x is a binary for treatment or not-treatment, then this is probably a problem, since there are other variables (male, athlete, male * athlete etc) that are correlated with treatment x. If those things are also related to the outcome y, then we've got OVB. But this level of analysis is contingent on treatment x being structurally related to y. we could control for it, but if we dont have the final grades of the students that dropped out of the program, there won't be anything really to control for. are we looking for the average causal effect of x for the groups of students that stuck around ? that's everyone less all the male athletes ? if so, then theres no problem. or the students that generally stick around ? it might not even then be a problem. but if we want the average causal effect of this x on a given student, this will be a problem. so really, i don't know. i need a much more clear idea of what we are trying to measure, because 'the effect on y because of x' can have several meanings, all of which could be reasonably supported
 
 b) Engineering students assigned to the control group put together a local area network so that they
 can share a private wireless Internet connection that they pay for jointly.

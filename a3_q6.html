@@ -287,8 +287,8 @@
       <p> but all the other coefficient estimates decrease as lambda increases (as the penalty gets bigger) </p>
       <p> the MSE-minimizing lambda is actually quite small, normally around 0.30 for these specs, but I did not verify the optimal lambda for this specific case, as it's just to show the pretty lines </p>
       <p> concerning the axis labels, it makes more sense to store all the numbers in one list </p>
-      <p> like, lambda is always mod(i-1,32)+1 = ((i-1)%32)+1 </p>
-      <p> i do %32 here because arr[] stores lambda (1), the intercept (1), and 30 coefficients, making 32 variables </p>
+      <p> like, lambda is always <span class='inline-code'>arr[mod(i-1,32)+1] = arr[((i-1)%32)+1]</span> </p>
+      <p> i do <span class='inline-code'>%32</span> here because <span class='inline-code'>arr[]</span> stores lambda (1), the intercept (1), and 30 coefficients, making 32 variables </p>
     </div>
 
     <div class='border margin padding' style='flex-grow:1;' > <img src='./a3_desc/a3_q6_abs(beta)_v_log(1+lambda)_case_4.png' /> </div>

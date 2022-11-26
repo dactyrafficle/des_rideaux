@@ -44,11 +44,13 @@ a) Midway through the year, all the male athletes move into a fraternity and dro
 
 maybe. it depends what we are trying to measure. if we think that <span class='math'>y = \beta_0 + \beta_1 x + u</span>, where x is a binary for treatment or not-treatment, then this is probably a problem, since there are other variables (male, athlete, male * athlete etc) that are correlated with treatment x. If those things are also related to the outcome y, then we've got OVB. But this level of analysis is contingent on treatment x being structurally related to y. we could control for it, but if we dont have the final grades of the students that dropped out of the program, there won't be anything really to control for. are we looking for the average causal effect of x for the groups of students that stuck around ? that's everyone less all the male athletes ? if so, then theres no problem. or the students that generally stick around ? it might not even then be a problem. but if we want the average causal effect of this x on a given student, this will be a problem. so really, i don't know. i need a much more clear idea of what we are trying to measure, because 'the effect on y because of x' can have several meanings, all of which could be reasonably supported
 
-b) Engineering students assigned to the control group put together a local area network so that they
-can share a private wireless Internet connection that they pay for jointly.
+b) Engineering students assigned to the control group put together a local area network so that they can share a private wireless Internet connection that they pay for jointly.
 
-c) The political studies majors in the treatment group never learn how to access their Internet
-accounts.
+maybe. are we trying to measure the effect of 'having internet (while) in the dorm room' ? that is, having a strong connection close to or at the location where one sleeps and/or studies ? or 'having internet provided while in the room' ? the difference is whether the internet is provided or not. are we measuring the internet-ness ? or the fact that it is provided ? if we're trying to measure the first, the LAN is a problem, because the group is volunteering into the treatment group without anyone necessarily knowing about it. so that becomes measurement error. we will have mis-measured x. and that would be a problem, really, especially since x is binary. but if we're trying to measure the act of providing the internet, then we can just control for the engineering students, and it isn't a problem.
+
+c) The political studies majors in the treatment group never learn how to access their Internet accounts.
+
+That isn't a problem, as long as you control for membership in the group. if the dorm is large, like the question says, and the wiring is random, then we dont even have to do that. Unless we are trying to determine the impact of 'using the internet', and distinguish that from 'having the internet' and all the combos of those with the internet being provided or not etc. that's why the question has to be air tight.
 
 d) The economics majors in the treatment group provide access to their Internet connection to
 those in the control group, for a fee. 

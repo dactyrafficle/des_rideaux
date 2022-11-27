@@ -95,7 +95,12 @@
 
   <h4> observations </h4>
   
-  <p> many </p>
+  <p> there are many observations </p>
+  <p> in all 4 cases, the full model OLS (X1 + X2) had the most bias. but this is natural, since it was heavily misspecified. </p>
+  <p> the good model OLS (X1) was perfectly specified, and did the best overall. </p>
+  <p> the LASSO models performed somewhere in the middle overall, but appears to have done better in terms of prediction when <span class='math'>\rho</span> and <span class='math'>\sigma^2</span> are high. </p>
+  <p> LASSO has as its objective to minimize the mean squared error. models with lots of uncertainty have more in the way of the variance-bias trade-off to explore. </p>
+  <p> so LASSO might do well in that circumstance, but there is no assurance that it picks the right regressors, or distinguish which among highly correlated regressors makes the most sense (imagine income on height or weight) </p>
 
 </div>
 
@@ -273,10 +278,10 @@
 
 <div class='box margin'><img src='./a3_desc/a3_q6_MSE_case_1.png' /></div>
 
-
-<img src='./a3_desc/a3_q6_sum(abs(beta))_histogram_case_1.png' />
-<img src='./a3_desc/a3_q6_sum(abs(beta))_v_log(lambda)_case_1.png' />
-
+<!--
+<div class='box'><img src='./a3_desc/a3_q6_sum(abs(beta))_histogram_case_1.png' /></div>
+<div class='box'><img src='./a3_desc/a3_q6_sum(abs(beta))_v_log(lambda)_case_1.png' /></div>
+-->
 
 </div>
 
@@ -289,12 +294,42 @@
       <p> concerning the axis labels, it makes more sense to store all the numbers in one list </p>
       <p> like, lambda is always <span class='inline-code'>arr[mod(i-1,32)+1] = arr[((i-1)%32)+1]</span> </p>
       <p> i do <span class='inline-code'>%32</span> here because <span class='inline-code'>arr[]</span> stores lambda (1), the intercept (1), and 30 coefficients, making 32 variables </p>
+      
+      
+      <img src='./a3_desc/a3_q6_coefficients_case_4.png' width=600 />
+      
+      
+      
     </div>
 
-    <div class='border margin padding' style='flex-grow:1;' > <img src='./a3_desc/a3_q6_abs(beta)_v_log(1+lambda)_case_4.png' /> </div>
-  </div>
+    <div class='border margin padding' style='flex-grow:1;' >
+    <img src='./a3_desc/a3_q6_coefficients_case_1.png' />
+    <p> when <span class='math'>\sigma^2</span> is big, and <span class='math'>\rho</span> is big, the estimates start out wild, and they experience lots of change quickly. </p>
+    </div>
   
+  </div>
 
+  <div class='margin' style='display: flex; flex-direction: row; border: 1px solid #58d;'>
+    <div class='border margin padding'>
+      <h4> bias tends to increase as lambda gets bigger </h4>
+      <p> as lambda goes up, the penalty increases pushing the coefficient estimates towards zero. </p>
+      <p> but in the short-short term, that might decrease bias, if the estimates were a lot bigger than the structural effects </p>
+      <p> if the estimates are big, then the sum of squared error can start out big. so that's why bias decreases a bit in the simulations drawn here - that's not necessarily the case, it's just that it is possible and it happened this time. </p>
+      <p> generally, as lambda goes up, the coefficient estimates get squeezed towards zero </p>
+      <p> that systematically lowers the variance of the estimates, but it also changes their central tendancy, or in other words, introduces bias to the estimates </p>
+      <p> so they start all moving towards some critical level of bias which is achieved when all the coefficients are zero. </p>
+      <p> LASSO lets us minimize the blue line (MSE). the lambda which solves the penalized minimization problem is the one which permits us to achieve the lowest point on the blue line. </p>
+      <p> but as long as MSE decreases, depending on our objectives, it might be worth the trade-off </p>
+      <p> also not that ive drawn these pictures using log(1+x), which i thought was helpful so I figured whoever looks at this might think so too. </p>
+      
+
+      
+      <img src='./a3_desc/a3_q6_MSE_SSB_VAR_case_4.png' width=600 />
+    
+    </div>
+
+    <div class='border margin padding' style='flex-grow:1;' > <img src='./a3_desc/a3_q6_MSE_SSB_VAR_case_1.png' /> </div>
+  </div>
 
 <div class='section border margin padding'>
 <pre>
